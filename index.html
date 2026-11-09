@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Capitals">
+<meta name="theme-color" content="#f6f5f1" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#121211" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<title>Capitals</title>
+<style>
+:root{
+  color-scheme:light;
+  --bg:#f6f5f1;--card:#ffffff;--card2:#faf9f6;--ink:#151514;--ink2:#52514e;--muted:#85827a;--line:#e6e4de;
+  --accent:#2a78d6;--accent-ink:#fff;--accent-soft:#e6f0fc;
+  --good:#1f7d46;--good-bg:#e4f3e9;--bad:#b83332;--bad-bg:#fbe8e7;--warn-bg:#fff4dc;
+  --s0:#dedcd5;--s1:#86b6ef;--s2:#2a78d6;--s3:#104281;--s4:repeating-linear-gradient(45deg,#dedcd5 0 2px,transparent 2px 5px);
+  --h0:#ebe9e3;--h1:#cde2fb;--h2:#86b6ef;--h3:#3987e5;--h4:#1c5cab;
+  --ser1:#2a78d6;--ser2:#eb6834;--grid:#ecebe6;--p0:#dedcd5;--p1:#f6c2a8;--p2:#eb6834;--p3:#a8401a;
+  --shadow:0 1px 2px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.04);
+}
+@media (prefers-color-scheme:dark){
+  :root:where(:not([data-theme="light"])){
+    color-scheme:dark;
+    --bg:#121211;--card:#1b1b1a;--card2:#202020;--ink:#f0efec;--ink2:#c3c2b7;--muted:#8f8d86;--line:#2e2e2c;
+    --accent:#3987e5;--accent-ink:#fff;--accent-soft:#16263b;
+    --good:#5ccb8a;--good-bg:#16301f;--bad:#ef7473;--bad-bg:#3a1c1b;--warn-bg:#33290f;
+    --s0:#363632;--s1:#256abf;--s2:#5598e7;--s3:#b7d3f6;--s4:repeating-linear-gradient(45deg,#3e3e3a 0 2px,transparent 2px 5px);
+    --h0:#262624;--h1:#104281;--h2:#1c5cab;--h3:#3987e5;--h4:#86b6ef;
+    --ser1:#3987e5;--ser2:#d95926;--grid:#2a2a28;--p0:#363632;--p1:#7a3518;--p2:#d95926;--p3:#f4ab8a;
+    --shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#121211;--card:#1b1b1a;--card2:#202020;--ink:#f0efec;--ink2:#c3c2b7;--muted:#8f8d86;--line:#2e2e2c;
+  --accent:#3987e5;--accent-ink:#fff;--accent-soft:#16263b;
+  --good:#5ccb8a;--good-bg:#16301f;--bad:#ef7473;--bad-bg:#3a1c1b;--warn-bg:#33290f;
+  --s0:#363632;--s1:#256abf;--s2:#5598e7;--s3:#b7d3f6;--s4:repeating-linear-gradient(45deg,#3e3e3a 0 2px,transparent 2px 5px);
+  --h0:#262624;--h1:#104281;--h2:#1c5cab;--h3:#3987e5;--h4:#86b6ef;
+  --ser1:#3987e5;--ser2:#d95926;--grid:#2a2a28;--p0:#363632;--p1:#7a3518;--p2:#d95926;--p3:#f4ab8a;--shadow:none;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,system-ui,"Segoe UI",sans-serif;font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+.wrap{max-width:780px;margin:0 auto;padding:calc(12px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right)) calc(96px + env(safe-area-inset-bottom)) calc(16px + env(safe-area-inset-left))}
+html{-webkit-text-size-adjust:100%}
+body{-webkit-tap-highlight-color:transparent;overscroll-behavior-y:none}
+button{touch-action:manipulation}
+header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:6px 0 12px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand h1{font-family:ui-serif,"New York",Georgia,serif;font-size:22px;margin:0;letter-spacing:-.01em}
+.globe{width:32px;height:32px;border-radius:50%;background:var(--accent);display:grid;place-items:center;color:#fff;font-size:17px}
+.sync{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px;white-space:nowrap}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--muted)}
+.dot.ok{background:var(--good)}.dot.err{background:var(--bad)}
+nav.tabs{display:flex;gap:2px;position:fixed;left:0;right:0;bottom:0;z-index:40;padding:6px calc(6px + env(safe-area-inset-right)) calc(6px + env(safe-area-inset-bottom)) calc(6px + env(safe-area-inset-left));background:color-mix(in srgb,var(--card) 92%,transparent);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-top:1px solid var(--line)}
+nav.tabs button .ic{display:block;font-size:20px;line-height:1.1;margin-bottom:1px}
+nav.tabs::-webkit-scrollbar{display:none}
+nav.tabs button{flex:1 1 0;min-width:0;border:0;background:transparent;padding:6px 2px;border-radius:10px;cursor:pointer;color:var(--muted);font-weight:600;font-size:10.5px;text-align:center}
+nav.tabs button.on{color:var(--accent);background:var(--accent-soft)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow);margin-bottom:14px}
+.card h2{font-family:ui-serif,"New York",Georgia,serif;font-size:19px;margin:0 0 4px;letter-spacing:-.01em}
+.card h3{font-size:15px;margin:0 0 8px}
+.sub{color:var(--ink2);margin:0 0 12px;font-size:14px}
+.muted{color:var(--muted);font-size:13px}
+.hero{background:linear-gradient(135deg,var(--accent),#1c5cab);color:#fff;border:0}
+.hero .sub{color:rgba(255,255,255,.85)}
+.hero h2{font-size:24px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);background:var(--card);padding:10px 16px;border-radius:12px;cursor:pointer;font-weight:600;font-size:15px;text-decoration:none}
+.btn:hover{border-color:var(--muted)}
+.btn.pri{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.pri:hover{filter:brightness(1.07)}
+.btn.white{background:#fff;color:#1c5cab;border-color:#fff}
+.btn.ghost{background:transparent;border-color:transparent;color:var(--ink2)}
+.btn.danger{color:var(--bad);border-color:var(--bad)}
+.btn.big{padding:14px 22px;font-size:17px;border-radius:14px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media (max-width:560px){.grid4{grid-template-columns:repeat(2,1fr)}.grid3 .tile .n{font-size:20px}.grid3 .tile{padding:10px}}
+.tile{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:12px}
+.tile .n{font-size:26px;font-weight:700;letter-spacing:-.02em;line-height:1.1}
+.tile .l{font-size:12px;color:var(--ink2);display:flex;align-items:center;gap:6px}
+.sw{width:10px;height:10px;border-radius:3px;display:inline-block;flex:none}
+.bar{display:flex;gap:2px;height:14px;border-radius:7px;overflow:hidden;background:transparent}
+.bar>span{display:block;height:100%}
+.bar>span:first-child{border-radius:4px 0 0 4px}.bar>span:last-child{border-radius:0 4px 4px 0}
+.bar>span:only-child{border-radius:4px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--ink2);margin-top:8px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.prow{display:grid;grid-template-columns:150px 1fr 54px;gap:10px;align-items:center;margin:8px 0;font-size:14px}
+.prow .pc{text-align:right;color:var(--ink2);font-variant-numeric:tabular-nums}
+@media (max-width:560px){.prow{grid-template-columns:100px 1fr 44px;font-size:13px}}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:600;background:var(--accent-soft);color:var(--accent)}
+.pill.g{background:var(--good-bg);color:var(--good)}
+.pill.gray{background:var(--card2);color:var(--ink2);border:1px solid var(--line)}
+.kv{display:flex;justify-content:space-between;gap:14px;padding:8px 0;border-top:1px solid var(--line);font-size:14px}
+.kv:first-child{border-top:0}
+.kv>:last-child{text-align:right}
+ul.clean{list-style:none;padding:0;margin:0}
+.mil li{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-top:1px solid var(--line);font-size:14px}
+.mil li:first-child{border-top:0}
+.mil .ck{width:22px;height:22px;border-radius:50%;border:2px solid var(--line);flex:none;display:grid;place-items:center;font-size:12px}
+.mil .done .ck{background:var(--good);border-color:var(--good);color:#fff}
+.mil .done{color:var(--ink2)}
+/* quiz */
+.qhead{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.qhead .t{font-weight:600;font-size:14px;flex:1;min-width:0}
+.prog{height:8px;background:var(--line);border-radius:4px;overflow:hidden;margin-top:6px}
+.prog>i{display:block;height:100%;background:var(--accent);border-radius:4px;transition:width .25s}
+.qcard{text-align:center;padding:30px 20px}
+.qcard .ask{color:var(--ink2);font-size:15px;margin-bottom:6px}
+.qcard .flag{font-size:44px;line-height:1.1;margin-bottom:4px}
+.qcard .country{font-family:ui-serif,"New York",Georgia,serif;font-size:32px;font-weight:700;letter-spacing:-.015em;line-height:1.15}
+.qcard .meta{margin-top:8px}
+.ansrow{display:flex;gap:8px;margin-top:22px}
+.ansrow input{flex:1;min-width:0;padding:14px 16px;font-size:18px;border-radius:12px;border:2px solid var(--line);background:var(--card2);outline:none}
+.ansrow input:focus{border-color:var(--accent)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:22px}
+@media (max-width:480px){.opts{grid-template-columns:1fr}}
+.opt{padding:14px 12px;border-radius:12px;border:2px solid var(--line);background:var(--card2);cursor:pointer;font-size:16px;font-weight:600;text-align:left;display:flex;gap:10px;align-items:center}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt .k{width:24px;height:24px;border-radius:6px;background:var(--line);font-size:12px;display:grid;place-items:center;flex:none;color:var(--ink2)}
+.opt.right{border-color:var(--good);background:var(--good-bg)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-bg)}
+.opt:disabled{cursor:default}
+.fb{margin-top:18px;border-radius:14px;padding:14px 16px;text-align:left}
+.fb.ok{background:var(--good-bg)}.fb.ko{background:var(--bad-bg)}
+.fb .h{font-weight:700;font-size:16px}
+.fb.ok .h{color:var(--good)}.fb.ko .h{color:var(--bad)}
+.fb .cap{font-size:20px;font-weight:700;margin-top:2px}
+.fb .note{font-size:13px;color:var(--ink2);margin-top:6px}
+.kbd{font-size:11px;color:var(--muted);margin-top:10px}
+.study .cap{font-family:ui-serif,"New York",Georgia,serif;font-size:34px;color:var(--accent);font-weight:700;margin:6px 0 2px}
+.study .note{background:var(--warn-bg);border-radius:10px;padding:10px 12px;font-size:14px;margin-top:14px;text-align:left}
+/* list */
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.filters input,.filters select,select.inp,textarea{padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--card2)}
+.filters input{flex:1 1 180px}
+.lrow{display:grid;grid-template-columns:28px 1fr 1fr 96px;gap:10px;align-items:center;padding:9px 4px;border-top:1px solid var(--line);font-size:14px}
+.lrow .f{font-size:20px}
+.lrow .cap.hid{filter:blur(6px);cursor:pointer;user-select:none}
+@media (max-width:520px){.lrow{grid-template-columns:24px 1fr 1fr;}.lrow .st{grid-column:2/4}}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--ink2)}
+/* charts */
+.chart svg{width:100%;height:auto;display:block;overflow:visible}
+.chart text{fill:var(--muted);font-size:12px;font-family:inherit}
+.chart .lbl{fill:var(--ink2);font-size:13px;font-weight:600}
+.tip{position:fixed;pointer-events:none;background:var(--ink);color:var(--bg);padding:7px 10px;border-radius:8px;font-size:12px;line-height:1.35;z-index:50;opacity:0;transition:opacity .1s;max-width:240px}
+.tip.on{opacity:1}
+.hm rect{cursor:default}
+.confirm{background:var(--warn-bg);border-radius:12px;padding:12px;margin-top:10px;font-size:14px}
+.loader{padding:60px 0;text-align:center;color:var(--muted)}
+.res-big{font-family:ui-serif,"New York",Georgia,serif;font-size:54px;font-weight:700;line-height:1;letter-spacing:-.02em}
+.mistakes{columns:2;column-gap:20px;font-size:14px}
+@media (max-width:520px){.mistakes{columns:1}}
+.mistakes div{break-inside:avoid;padding:3px 0}
+details summary{cursor:pointer;color:var(--ink2);font-size:14px}
+label.radio{display:flex;gap:8px;align-items:center;padding:6px 0;cursor:pointer}
+.sr{position:absolute;left:-9999px}
+table.tbl{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
+table.tbl td,table.tbl th{padding:5px 6px;border-top:1px solid var(--line);text-align:right}
+table.tbl th:first-child,table.tbl td:first-child{text-align:left}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><div class="globe" aria-hidden="true">◍</div><h1>Capitals del món</h1></div>
+    <div class="sync" id="sync"><span class="dot"></span><span>Carregant…</span></div>
+  </header>
+  <nav class="tabs" id="tabs"></nav>
+  <main id="view"><div class="loader">Carregant el teu progrés…</div></main>
+</div>
+<div class="tip" id="tip"></div>
+<script>
+"use strict";
+/* ============ DADES ============
+   id;fase;continent;país;capital;àlies acceptats|...;nota  */
+const RAW = `
+ES;1;eu;Espanya;Madrid;;
+FR;1;eu;França;París;Paris;
+PT;1;eu;Portugal;Lisboa;Lisbon;
+IT;1;eu;Itàlia;Roma;Rome;
+DE;1;eu;Alemanya;Berlín;Berlin;
+GB;1;eu;Regne Unit;Londres;London;
+AD;1;eu;Andorra;Andorra la Vella;Andorra la Vieja;
+BE;1;eu;Bèlgica;Brussel·les;Bruselas|Brussels|Bruxelles|Brussel|Brusselles;
+NL;1;eu;Països Baixos;Amsterdam;Ámsterdam;La seu del govern i del Parlament és a la Haia, però la capital és Amsterdam.
+CH;1;eu;Suïssa;Berna;Bern|Berne;Oficialment s'anomena «ciutat federal». No és Zuric ni Ginebra.
+AT;1;eu;Àustria;Viena;Wien|Vienna;
+IE;1;eu;Irlanda;Dublín;Dublin;
+DK;1;eu;Dinamarca;Copenhaguen;Copenhague|Copenhagen|København|Kobenhavn;
+SE;1;eu;Suècia;Estocolm;Estocolmo|Stockholm;
+NO;1;eu;Noruega;Oslo;;
+FI;1;eu;Finlàndia;Hèlsinki;Helsinki;
+IS;1;eu;Islàndia;Reykjavík;Reikiavik;
+PL;1;eu;Polònia;Varsòvia;Varsovia|Warsaw|Warszawa;
+CZ;1;eu;Txèquia;Praga;Prague|Praha;
+GR;1;eu;Grècia;Atenes;Atenas|Athens;
+RU;1;eu;Rússia;Moscou;Moscú|Moscow|Moskva;
+UA;1;eu;Ucraïna;Kíiv;Kiev|Kyiv|Kíev;
+HU;1;eu;Hongria;Budapest;;
+RO;1;eu;Romania;Bucarest;Bucharest|Bucuresti;
+BG;1;eu;Bulgària;Sofia;;
+HR;1;eu;Croàcia;Zagreb;;
+SK;1;eu;Eslovàquia;Bratislava;;
+SI;1;eu;Eslovènia;Ljubljana;Liubliana;
+RS;1;eu;Sèrbia;Belgrad;Belgrado|Belgrade|Beograd;
+BA;1;eu;Bòsnia i Hercegovina;Sarajevo;;
+ME;1;eu;Montenegro;Podgorica;;
+MK;1;eu;Macedònia del Nord;Skopje;Escòpia|Skopie;
+AL;1;eu;Albània;Tirana;;
+EE;1;eu;Estònia;Tallinn;Talin;
+LV;1;eu;Letònia;Riga;;
+LT;1;eu;Lituània;Vílnius;Vilnius|Vilna;
+BY;1;eu;Belarús;Minsk;;
+MD;1;eu;Moldàvia;Chişinău;Chisinau|Kishinev|Quixinau|Kixinau;
+CY;1;eu;Xipre;Nicòsia;Nicosia;
+MT;1;eu;Malta;la Valletta;Valletta|La Valeta;
+LU;1;eu;Luxemburg;Luxemburg;Luxembourg|Luxemburgo;
+MC;1;eu;Mònaco;Mònaco;Monaco;Mònaco és una ciutat estat: el país i la capital es diuen igual.
+LI;1;eu;Liechtenstein;Vaduz;;
+SM;1;eu;San Marino;San Marino;Ciutat de San Marino;
+VA;1;eu;Vaticà;Ciutat del Vaticà;Vaticà|Vaticano|Vatican;
+US;1;nc;Estats Units;Washington DC;Washington|Washington D.C.;No és Nova York.
+CA;1;nc;Canadà;Ottawa;Otawa;No és Toronto ni Mont-real.
+MX;1;nc;Mèxic;Ciutat de Mèxic;Mexico DF|México|Mexic;
+CU;1;nc;Cuba;l'Havana;La Habana|Havana;
+GT;1;nc;Guatemala;Ciutat de Guatemala;Guatemala;
+CR;1;nc;Costa Rica;San José;Sant Josep;
+PA;1;nc;Panamà;Ciutat de Panamà;Panamá|Panama City;
+DO;1;nc;República Dominicana;Santo Domingo;Sant Domingo;
+HN;1;nc;Hondures;Tegucigalpa;;
+SV;1;nc;El Salvador;San Salvador;;
+NI;1;nc;Nicaragua;Managua;;
+JM;1;nc;Jamaica;Kingston;;
+HT;1;nc;Haití;Port-au-Prince;Puerto Príncipe|Port au Prince;
+AR;1;sa;Argentina;Buenos Aires;;
+BR;1;sa;Brasil;Brasília;Brasilia;No és Rio de Janeiro (capital fins al 1960).
+CL;1;sa;Xile;Santiago de Xile;Santiago|Santiago de Chile;
+CO;1;sa;Colòmbia;Bogotà;Bogotá;
+PE;1;sa;Perú;Lima;;
+VE;1;sa;Veneçuela;Caracas;;
+UY;1;sa;Uruguai;Montevideo;;
+PY;1;sa;Paraguai;Asunción;Asunció;
+BO;1;sa;Bolívia;Sucre;La Paz;Sucre és la capital constitucional i La Paz, la seu del govern. S'accepten totes dues.
+EC;1;sa;Equador;Quito;;No és Guayaquil.
+CN;1;as;Xina;Pequín;Pekín|Beijing|Peking;
+JP;1;as;Japó;Tòquio;Tokio|Tokyo;
+IN;1;as;Índia;Nova Delhi;Nueva Delhi|New Delhi|Delhi;
+KR;1;as;Corea del Sud;Seül;Seúl|Seoul;
+KP;1;as;Corea del Nord;Pyongyang;Pionyang|Piongyang;
+TR;1;as;Turquia;Ankara;;No és Istanbul, la ciutat més gran.
+IL;1;as;Israel;Jerusalem;Jerusalén|Tel Aviv;Israel la proclama capital, però el reconeixement internacional és limitat i la majoria d'ambaixades són a Tel Aviv. S'accepten totes dues.
+SA;1;as;Aràbia Saudita;Riad;Riyadh|Riyad;
+AE;1;as;Emirats Àrabs Units;Abu Dhabi;Abu Dabi;No és Dubai.
+IR;1;as;Iran;Teheran;Teherán|Tehran;
+IQ;1;as;Iraq;Bagdad;Baghdad;
+SY;1;as;Síria;Damasc;Damasco|Damascus;
+LB;1;as;Líban;Beirut;;
+JO;1;as;Jordània;Amman;Ammán;
+TH;1;as;Tailàndia;Bangkok;;
+VN;1;as;Vietnam;Hanoi;Hanói;No és Ho Chi Minh (l'antiga Saigon).
+PH;1;as;Filipines;Manila;;
+ID;1;as;Indonèsia;Jakarta;Yakarta|Nusantara;Està traslladant la capital a Nusantara (Borneo); s'accepten totes dues.
+MY;1;as;Malàisia;Kuala Lumpur;;La seu administrativa és Putrajaya.
+SG;1;as;Singapur;Singapur;Singapore;Ciutat estat: el país i la capital es diuen igual.
+PK;1;as;Pakistan;Islamabad;;No és Karachi.
+AF;1;as;Afganistan;Kabul;;
+BD;1;as;Bangladesh;Dhaka;Dacca;
+NP;1;as;Nepal;Katmandú;Katmandu|Kathmandu;
+LK;1;as;Sri Lanka;Sri Jayawardenepura Kotte;Kotte|Colombo;Colombo és la ciutat principal i també s'accepta.
+MN;1;as;Mongòlia;Ulan Bator;Ulaanbaatar|Ulán Bator;
+KZ;1;as;Kazakhstan;Astana;Nur-Sultan;No és Almaty (capital fins al 1997).
+UZ;1;as;Uzbekistan;Taixkent;Tashkent|Taskent;
+KH;1;as;Cambodja;Phnom Penh;Nom Pen;
+LA;1;as;Laos;Vientiane;Vientián;
+MM;1;as;Myanmar;Naypyidaw;Naipyidó|Nay Pyi Taw|Naypyitaw;Va substituir Yangon (Rangun) el 2005.
+TW;1;as;Taiwan;Taipei;Taipéi;Estatus internacional disputat.
+QA;1;as;Qatar;Doha;;
+KW;1;as;Kuwait;Ciutat de Kuwait;Kuwait|Kuwait City;
+OM;1;as;Oman;Masqat;Mascate|Muscat|Mascat;
+YE;1;as;Iemen;Sanà;Saná|Sanaa|Sana'a;Per la guerra, el govern reconegut opera des d'Aden.
+GE;1;as;Geòrgia;Tbilissi;Tbilisi;
+AM;1;as;Armènia;Erevan;Ereván|Yerevan;
+AZ;1;as;Azerbaidjan;Bakú;Baku;
+KG;1;as;Kirguizistan;Bixkek;Bishkek|Biskek;
+TJ;1;as;Tadjikistan;Duixanbé;Dushanbe|Dusambé|Dusanbe;
+TM;1;as;Turkmenistan;Aixkhabad;Ashgabat|Asjabad|Ashkhabad;
+EG;1;af;Egipte;el Caire;El Cairo|Cairo;
+MA;1;af;Marroc;Rabat;;No és Casablanca.
+DZ;1;af;Algèria;Alger;Argel|Algiers;
+TN;1;af;Tunísia;Tunis;Túnez;
+LY;1;af;Líbia;Trípoli;Tripoli;
+ZA;1;af;Sud-àfrica;Pretòria;Pretoria|Ciutat del Cap|Ciudad del Cabo|Cape Town|Bloemfontein;Té tres capitals: Pretòria (executiu), Ciutat del Cap (legislatiu) i Bloemfontein (judicial).
+NG;1;af;Nigèria;Abuja;;No és Lagos (capital fins al 1991).
+KE;1;af;Kenya;Nairobi;;
+ET;1;af;Etiòpia;Addis Abeba;Addis Ababa|Adís Abeba;
+SN;1;af;Senegal;Dakar;;
+GH;1;af;Ghana;Accra;Acra;
+CI;1;af;Costa d'Ivori;Yamoussoukro;Yamusukro;Abidjan és la capital econòmica.
+CM;1;af;Camerun;Iaundé;Yaoundé|Yaundé;
+CD;1;af;República Democràtica del Congo;Kinshasa;;
+CG;1;af;República del Congo;Brazzaville;;
+AO;1;af;Angola;Luanda;;
+MZ;1;af;Moçambic;Maputo;;
+TZ;1;af;Tanzània;Dodoma;;Dar es Salaam és la ciutat principal i l'antiga capital.
+UG;1;af;Uganda;Kampala;;
+RW;1;af;Ruanda;Kigali;;
+SD;1;af;Sudan;Khartum;Jartum|Khartoum;
+SS;1;af;Sudan del Sud;Juba;Yuba;
+SO;1;af;Somàlia;Mogadiscio;Mogadishu|Muqdisho;
+ML;1;af;Mali;Bamako;;
+NE;1;af;Níger;Niamey;;
+TD;1;af;Txad;N'Djamena;Yamena|Ndjamena;
+BF;1;af;Burkina Faso;Ouagadougou;Uagadugu|Wagadugu;
+MR;1;af;Mauritània;Nouakchott;Nuakchot;
+GN;1;af;Guinea;Conakry;Konakri;
+SL;1;af;Sierra Leone;Freetown;;
+LR;1;af;Libèria;Monròvia;Monrovia;
+TG;1;af;Togo;Lomé;;
+BJ;1;af;Benín;Porto-Novo;Porto Novo;La seu del govern és Cotonou.
+GA;1;af;Gabon;Libreville;;
+GQ;1;af;Guinea Equatorial;Malabo;;Està traslladant la capital a Ciudad de la Paz, al continent.
+CF;1;af;República Centreafricana;Bangui;;
+MG;1;af;Madagascar;Antananarivo;Tananarive;
+ZM;1;af;Zàmbia;Lusaka;;
+ZW;1;af;Zimbàbue;Harare;;
+MW;1;af;Malawi;Lilongwe;;
+BW;1;af;Botswana;Gaborone;;
+NA;1;af;Namíbia;Windhoek;;
+AU;1;oc;Austràlia;Canberra;;No és Sydney.
+NZ;1;oc;Nova Zelanda;Wellington;;No és Auckland.
+PG;1;oc;Papua Nova Guinea;Port Moresby;;
+XK;2;eu;Kosovo;Pristina;Prishtina|Priština;No el reconeixen tots els estats (Espanya, per exemple, no).
+BS;2;nc;Bahames;Nassau;;
+BZ;2;nc;Belize;Belmopan;;No és Belize City, la ciutat més gran.
+TT;2;nc;Trinitat i Tobago;Port of Spain;Puerto España|Port d'Espanya;
+BB;2;nc;Barbados;Bridgetown;;
+AG;2;nc;Antigua i Barbuda;Saint John's;St. John's|Saint Johns;
+DM;2;nc;Dominica;Roseau;;No confonguis Dominica amb la República Dominicana.
+GD;2;nc;Grenada;Saint George's;St. George's;
+KN;2;nc;Saint Kitts i Nevis;Basseterre;;
+LC;2;nc;Saint Lucia;Castries;;
+VC;2;nc;Saint Vincent i les Grenadines;Kingstown;;Kingstown (amb «-town»), no Kingston com Jamaica.
+GY;2;sa;Guyana;Georgetown;;
+SR;2;sa;Surinam;Paramaribo;;
+PS;2;as;Palestina;Ramallah;Jerusalem Est|Jerusalén Este|Jerusalem;Proclama Jerusalem Est com a capital; la seu administrativa és Ramallah. S'accepten totes dues.
+BH;2;as;Bahrain;Manama;;
+BT;2;as;Bhutan;Thimphu;Timbu|Thimpu;
+BN;2;as;Brunei;Bandar Seri Begawan;;
+MV;2;as;Maldives;Malé;;
+TL;2;as;Timor Oriental;Dili;;
+BI;2;af;Burundi;Gitega;;Fins al 2019 la capital era Bujumbura.
+CV;2;af;Cap Verd;Praia;;
+KM;2;af;Comores;Moroni;;
+DJ;2;af;Djibouti;Djibouti;Yibuti;
+ER;2;af;Eritrea;Asmara;;
+SZ;2;af;Eswatini;Mbabane;Lobamba;Mbabane és l'administrativa; Lobamba, la reial i legislativa. S'accepten totes dues.
+GM;2;af;Gàmbia;Banjul;;
+GW;2;af;Guinea Bissau;Bissau;;
+LS;2;af;Lesotho;Maseru;;
+MU;2;af;Maurici;Port Louis;;
+ST;2;af;São Tomé i Príncipe;São Tomé;Santo Tomé|Sao Tome;
+SC;2;af;Seychelles;Victoria;;
+FJ;2;oc;Fiji;Suva;;
+WS;2;oc;Samoa;Apia;;
+TO;2;oc;Tonga;Nuku'alofa;Nukualofa;
+VU;2;oc;Vanuatu;Port Vila;;
+SB;2;oc;Illes Salomó;Honiara;;
+KI;2;oc;Kiribati;Tarawa Sud;Tarawa|South Tarawa;
+MH;2;oc;Illes Marshall;Majuro;;
+FM;2;oc;Micronèsia;Palikir;;
+PW;2;oc;Palau;Ngerulmud;Melekeok;
+NR;2;oc;Nauru;Yaren;;No té capital oficial; Yaren és la seu del govern.
+TV;2;oc;Tuvalu;Funafuti;;
+FO;3;eu;Illes Fèroe (Dinamarca);Tórshavn;Torshavn;
+GI;3;eu;Gibraltar (R. Unit);Gibraltar;;
+IM;3;eu;Illa de Man (R. Unit);Douglas;;
+JE;3;eu;Jersey (R. Unit);Saint Helier;St Helier;
+GG;3;eu;Guernsey (R. Unit);Saint Peter Port;St Peter Port;
+AX;3;eu;Åland (Finlàndia);Mariehamn;Maarianhamina;
+GL;3;nc;Grenlàndia (Dinamarca);Nuuk;Godthåb;
+PR;3;nc;Puerto Rico (EUA);San Juan;Sant Joan;
+BM;3;nc;Bermudes (R. Unit);Hamilton;;
+KY;3;nc;Illes Caiman (R. Unit);George Town;Georgetown;
+AW;3;nc;Aruba (Països Baixos);Oranjestad;;
+CW;3;nc;Curaçao (Països Baixos);Willemstad;;
+VG;3;nc;Illes Verges Britàniques;Road Town;;
+VI;3;nc;Illes Verges dels EUA;Charlotte Amalie;;
+TC;3;nc;Illes Turks i Caicos (R. Unit);Cockburn Town;;
+AI;3;nc;Anguilla (R. Unit);The Valley;Valley;
+MS;3;nc;Montserrat (R. Unit);Plymouth;Brades;Plymouth va quedar abandonada per l'erupció del 1997; el govern és a Brades. S'accepten totes dues.
+GP;3;nc;Guadalupe (França);Basse-Terre;Basse Terre;
+MQ;3;nc;Martinica (França);Fort-de-France;Fort de France;
+PM;3;nc;Saint-Pierre i Miquelon (França);Saint-Pierre;Saint Pierre;
+GF;3;sa;Guaiana Francesa;Caiena;Cayenne|Cayena;
+FK;3;sa;Illes Malvines (R. Unit);Stanley;Port Stanley|Puerto Argentino;Territori britànic reclamat per l'Argentina.
+RE;3;af;Reunió (França);Saint-Denis;Saint Denis;
+YT;3;af;Mayotte (França);Mamoudzou;;
+SH;3;af;Santa Helena (R. Unit);Jamestown;;
+EH;3;af;Sàhara Occidental;El Aaiún;Laâyoune|Laayoune|Aaiun|Aaiún;Territori no autònom en disputa.
+NC;3;oc;Nova Caledònia (França);Nouméa;Noumea;
+PF;3;oc;Polinèsia Francesa;Papeete;;
+GU;3;oc;Guam (EUA);Hagåtña;Hagatna|Agaña|Agana;
+AS;3;oc;Samoa Nord-americana;Pago Pago;;
+CK;3;oc;Illes Cook (N. Zelanda);Avarua;;
+NU;3;oc;Niue (N. Zelanda);Alofi;;
+MP;3;oc;Illes Mariannes Septentrionals (EUA);Saipan;;
+WF;3;oc;Wallis i Futuna (França);Mata-Utu;Matautu|Mata Utu;
+NF;3;oc;Illa Norfolk (Austràlia);Kingston;;
+PN;3;oc;Illes Pitcairn (R. Unit);Adamstown;;
+`;
+const CONT={eu:'Europa',nc:'Amèrica del Nord i Central',sa:'Amèrica del Sud',as:'Àsia',af:'Àfrica',oc:'Oceania'};
+const CONT_ORDER=['eu','nc','sa','as','af','oc'];
+const PH={
+  1:{name:'Fase 1 · Essencials',short:'Fase 1',desc:'Els estats més coneguts: tot Europa, les grans potències, tota l\'Amèrica continental i gairebé tota Àsia i Àfrica.'},
+  2:{name:'Fase 2 · Resta del món',short:'Fase 2',desc:'Els estats que falten: illes del Carib i del Pacífic, Àfrica petita, microestats asiàtics, Kosovo i Palestina.'},
+  3:{name:'Fase 3 · Territoris',short:'Fase 3',desc:'Territoris i dependències amb capital pròpia: Grenlàndia, Puerto Rico, Bermudes, Polinèsia Francesa…'}
+};
+const C = RAW.trim().split('\n').map((l,i)=>{const p=l.split(';');return {id:p[0],ph:+p[1],ct:p[2],country:p[3],cap:p[4],al:p[5]?p[5].split('|'):[],note:p.slice(6).join(';')||'',ord:i};});
+const BY={}; C.forEach(c=>BY[c.id]=c);
+const OTHER_CAPS=new Set();
+const idsOf=p=>C.filter(c=>c.ph===p).map(c=>c.id);
+const STATUS=['Per aprendre','En procés','Apresa','Dominada','No vista encara'];
+const INT=[0,1,3,7,14,30,60,120];
+
+/* ============ UTILITATS ============ */
+const pad=n=>String(n).padStart(2,'0');
+const dkey=(d=new Date())=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const dnum=k=>{const [y,m,d]=k.split('-').map(Number);return Math.round(Date.UTC(y,m-1,d)/864e5);};
+const nkey=n=>{const d=new Date(n*864e5);return d.getUTCFullYear()+'-'+pad(d.getUTCMonth()+1)+'-'+pad(d.getUTCDate());};
+const T=()=>dkey(); const tn=()=>dnum(T());
+const MESOS=['gen','febr','març','abr','maig','juny','jul','ag','set','oct','nov','des'];
+const fmtD=n=>{const d=new Date(n*864e5);return d.getUTCDate()+' '+MESOS[d.getUTCMonth()];};
+const fmtDY=n=>{const d=new Date(n*864e5);return d.getUTCDate()+' '+MESOS[d.getUTCMonth()]+' '+d.getUTCFullYear();};
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const flag=id=>{if(!/^[A-Z]{2}$/.test(id)||id==='XK')return '🏳️';return String.fromCodePoint(...[...id].map(ch=>0x1F1E6+ch.charCodeAt(0)-65));};
+const pct=(a,b)=>b?Math.round(a*100/b):0;
+
+function norm(s){
+  let x=String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+  x=x.replace(/[·.]/g,'').replace(/['’`´]/g,' ').replace(/[-–,()\/]/g,' ').replace(/\s+/g,' ').trim();
+  x=x.replace(/^st /,'saint ').replace(/\b(ciutat|ciudad|city)\s+(de|del|of)\s+/g,'').replace(/^(el|la|l|les|los|the)\s+/,'');
+  return x.replace(/ /g,'');
+}
+function lev(a,b){
+  if(a===b)return 0; const m=a.length,n=b.length; if(!m)return n; if(!n)return m;
+  let prev=Array.from({length:n+1},(_,i)=>i);
+  for(let i=1;i<=m;i++){const cur=[i];for(let j=1;j<=n;j++){cur[j]=Math.min(prev[j]+1,cur[j-1]+1,prev[j-1]+(a[i-1]===b[j-1]?0:1));}prev=cur;}
+  return prev[n];
+}
+function capsSet(){if(!OTHER_CAPS.size)C.forEach(c=>OTHER_CAPS.add(norm(c.cap)));}
+function check(id,text){
+  capsSet();
+  const c=BY[id]; const g=norm(text); if(!g) return {ok:false,typo:false};
+  const cands=[c.cap,...c.al].map(norm);
+  if(cands.includes(g)) return {ok:true,typo:false};
+  if(OTHER_CAPS.has(g)) return {ok:false,typo:false};
+  for(const k of cands){const tol=k.length<=4?0:k.length<=7?1:2; if(lev(k,g)<=tol) return {ok:true,typo:true};}
+  return {ok:false,typo:false};
+}
+
+/* ============ ESTAT I DESAT ============ */
+const KEY='capitals-mon-v1';
+function fresh(){return {v:1,created:T(),updated:0,settings:{newPerDay:15,mode:'write'},cards:{},placement:{},days:{}};}
+let S=fresh();
+let ref=null, saveTimer=null, saving=false, again=false, syncState='local';
+function loadLocal(){try{const r=localStorage.getItem(KEY);if(r){const o=JSON.parse(r);if(o&&o.v===1)return o;}}catch(e){}return null;}
+function setSync(st,msg){syncState=st;const el=document.getElementById('sync');if(!el)return;
+  const txt=msg||'Desat al mòbil';
+  el.innerHTML='<span class="dot '+(st==='ok'?'ok':st==='err'?'err':'')+'"></span><span>'+esc(txt)+'</span>';}
+function day(){const k=T();return S.days[k]||(S.days[k]={q:0,ok:0,n:0,l:0,m:0});}
+function snap(){const d=day();let l=0,m=0;for(const id in S.cards){const b=S.cards[id].b;if(b>=3)l++;if(b>=5)m++;}d.l=l;d.m=m;}
+function save(){
+  snap(); S.updated=Date.now();
+  try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}
+  if(ref){clearTimeout(saveTimer);saveTimer=setTimeout(flush,1000);setSync('saving');}
+}
+async function flush(){
+  if(!ref)return; if(saving){again=true;return;}
+  saving=true;
+  try{await ref.set(JSON.parse(JSON.stringify(S)));setSync('ok');}
+  catch(e){ if(e&&e.code==='unavailable'){try{await new Promise(r=>setTimeout(r,800+Math.random()*800));await ref.set(JSON.parse(JSON.stringify(S)));setSync('ok');}catch(e2){setSync('err');}} else setSync('err'); }
+  saving=false; if(again){again=false;flush();}
+}
+async function initStore(){
+  const local=loadLocal(); if(local) S=local;
+  try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist();}catch(e){}
+  setSync('local');
+}
+
+/* ============ LÒGICA D'APRENENTATGE ============ */
+const bOf=id=>S.cards[id]?S.cards[id].b:0;
+function seen(id){if(S.cards[id])return true;for(const p in S.placement){if(S.placement[p].res&&(id in S.placement[p].res))return true;}return false;}
+const stOf=id=>{const b=bOf(id);return b===0?(seen(id)?0:4):b<=2?1:b<=4?2:3;};
+function counts(ids){const r=[0,0,0,0,0];ids.forEach(id=>r[stOf(id)]++);return r;}
+function learnedRatio(p){const ids=idsOf(p);return ids.filter(id=>bOf(id)>=3).length/ids.length;}
+function unlocked(p){return p===1||learnedRatio(p-1)>=0.8;}
+function openPhases(){return [1,2,3].filter(p=>p===1||(unlocked(p)&&unlocked(p-1))||placementDone(p));}
+function dueIds(){const t=tn();return shuffle(Object.keys(S.cards).filter(id=>S.cards[id].b>0&&S.cards[id].d<=t&&BY[id])).sort((a,b)=>S.cards[a].d-S.cards[b].d);}
+function newPool(){
+  const out=[];
+  for(const p of [1,2,3]){
+    if(!unlocked(p))break;
+    const pool=C.filter(c=>c.ph===p&&bOf(c.id)===0);
+    pool.sort((a,b)=>CONT_ORDER.indexOf(a.ct)-CONT_ORDER.indexOf(b.ct)||a.ord-b.ord);
+    out.push(...pool.map(c=>c.id));
+  }
+  return out;
+}
+function newLeftToday(){return Math.max(0,S.settings.newPerDay-(S.days[T()]?S.days[T()].n:0));}
+function srs(id,ok,slow){
+  const c=S.cards[id]||(S.cards[id]={b:0,d:0,ok:0,ko:0});
+  if(ok){c.ok++;if(!(slow&&c.b>=3))c.b=c.b===0?1:Math.min(7,c.b+1);}else{c.ko++;c.b=1;}
+  c.d=tn()+INT[c.b];
+}
+function streak(){let n=0,d=tn();if(!(S.days[nkey(d)]&&S.days[nkey(d)].q>0))d--;while(S.days[nkey(d)]&&S.days[nkey(d)].q>0){n++;d--;}return n;}
+function placementDone(p){return !!(S.placement[p]&&S.placement[p].done);}
+function placementInfo(p){const P=S.placement[p];if(!P)return null;const ans=Object.keys(P.res).length;const ok=Object.values(P.res).filter(v=>v===1).length;return {P,ans,ok,total:P.order.length};}
+function level(r){return r>=.85?'Expert':r>=.65?'Avançat':r>=.4?'Intermedi':'Inicial';}
+function dueOn(n){return Object.values(S.cards).filter(c=>c.b>0&&c.d===n).length;}
+function remainingNew(p){return C.filter(c=>c.ph===p&&bOf(c.id)===0).length;}
+
+/* ============ NAVEGACIÓ ============ */
+const TABS=[['avui','Avui','🏠'],['progres','Progrés','📈'],['pla','Pla','🗺️'],['llista','Llista','📋'],['practica','Pràctica','⚡'],['ajustos','Ajustos','⚙️']];
+let route='avui', Q=null, ST=null, RES=null, listOpts={q:'',ct:'',ph:'',st:'',hide:false}, confirmReset=false, quitAsk=false;
+function go(r){clearInterval(sprintTimer);route=r;Q=null;ST=null;quitAsk=false;render();window.scrollTo(0,0);}
+function renderTabs(){
+  const t=document.getElementById('tabs');
+  const inSession=route==='quiz'||route==='study'||route==='result';
+  t.style.display=inSession?'none':'flex';
+  t.innerHTML=TABS.map(([k,l,ic])=>'<button class="'+(route===k?'on':'')+'" onclick="go(\''+k+'\')"><span class="ic">'+ic+'</span>'+l+'</button>').join('');
+}
+function render(){
+  renderTabs(); hideTip();
+  const v=document.getElementById('view');
+  const fn={avui:vAvui,progres:vProgres,pla:vPla,llista:vLlista,practica:vPractica,ajustos:vAjustos,quiz:vQuiz,study:vStudy,result:vResult}[route]||vAvui;
+  v.innerHTML=fn();
+  if(route==='quiz'&&Q&&Q.cur)paintQuiz();
+  if(route==='progres')bindCharts();
+  if(route==='llista')bindList();
+}
+
+/* ============ VISTA: AVUI ============ */
+function phaseBar(ids){
+  const c=counts(ids),tot=ids.length;
+  return '<div class="bar" role="img" aria-label="'+STATUS.map((s,i)=>s+': '+c[i]).join(', ')+'">'+
+    [3,2,1,0,4].map(i=>c[i]?'<span style="width:'+(c[i]*100/tot)+'%;background:var(--s'+i+')" data-tip="'+STATUS[i]+': '+c[i]+'"></span>':'').join('')+'</div>';
+}
+function legend(){return '<div class="legend">'+[3,2,1,0,4].map(i=>'<span><i class="sw" style="background:var(--s'+i+')"></i>'+STATUS[i]+'</span>').join('')+'</div>';}
+function vAvui(){
+  const P1=placementInfo(1);
+  let h='';
+  if(!placementDone(1)&&!(P1&&P1.ans>0)&&!S.skipWelcome){
+    h+='<div class="card"><h2>Benvinguda a l\'app</h2><p class="sub">Si ja has començat a l\'app de Claude, porta-hi el progrés: allà, a <b>Ajustos</b>, prem <b>«Copia la còpia de seguretat»</b> i enganxa el text aquí.</p>'+
+      '<textarea id="welt" rows="3" style="width:100%;font-size:16px" placeholder="Enganxa aquí la còpia"></textarea>'+
+      '<div class="row" style="margin-top:8px"><button class="btn pri" onclick="importBackup(\'welt\')">Importa el progrés</button><label class="btn">Fitxer…<input type="file" accept=".json,application/json,text/plain" class="sr" onchange="importFile(this)"></label><button class="btn ghost" onclick="S.skipWelcome=true;save();render()">Començo de zero</button></div><div id="welm" class="muted" style="margin-top:6px"></div></div>';
+  }
+  if(!placementDone(1)){
+    const started=P1&&P1.ans>0;
+    h+='<div class="card hero"><h2>'+(started?'Continua l\'examen de nivell':'Pas 1 · Examen de nivell')+'</h2>'+
+      '<p class="sub">Escriu la capital de cadascun dels 155 estats de la Fase 1. Si no la saps, prem «No ho sé»: no passa res, serveix per saber per on començar. Uns 15 minuts, i el pots deixar a mitges i continuar quan vulguis.</p>'+
+      (started?'<div class="prog" style="background:rgba(255,255,255,.25);margin-bottom:14px"><i style="width:'+pct(P1.ans,P1.total)+'%;background:#fff"></i></div><p class="sub" style="margin-top:-6px">'+P1.ans+' de '+P1.total+' respostes · '+P1.ok+' encerts fins ara</p>':'')+
+      '<button class="btn white big" onclick="startPlacement(1)">'+(started?'Continua l\'examen':'Comença l\'examen')+' →</button></div>';
+    h+='<div class="card"><h2>Com funcionarà</h2><ul class="clean mil">'+
+      '<li><span class="ck">1</span><div><b>Avui: examen de nivell.</b> Les que ja saps queden marcades com a apreses i es repassaran més endavant per confirmar-ho.</div></li>'+
+      '<li><span class="ck">2</span><div><b>Cada dia: una sessió de 10–15 min.</b> Primer veus les capitals noves del dia en fitxes i després fas un test amb aquestes i els repassos que toquen.</div></li>'+
+      '<li><span class="ck">3</span><div><b>Repetició espaiada.</b> Cada encert allarga el temps fins al següent repàs (1, 3, 7, 14, 30, 60 dies…). Si falles, torna a començar.</div></li>'+
+      '<li><span class="ck">4</span><div><b>Ampliació per fases.</b> Quan tinguis el 80% de la Fase 1 apresa, s\'obre la Fase 2 (resta d\'estats) i després la Fase 3 (territoris).</div></li></ul></div>';
+    return h;
+  }
+  const due=dueIds(), nl=newLeftToday(), pool=newPool(), nNew=Math.min(nl,pool.length);
+  const doneToday=due.length===0&&nNew===0;
+  const mins=Math.max(1,Math.round((due.length*7+nNew*20)/60));
+  const st=streak(), dt=S.days[T()];
+  if(!doneToday){
+    h+='<div class="card hero"><h2>Sessió d\'avui</h2><p class="sub">'+(due.length?'<b>'+due.length+'</b> repassos':'Cap repàs pendent')+' · '+(nNew?'<b>'+nNew+'</b> capitals noves':'cap capital nova')+' · uns '+mins+' min</p>'+
+      '<button class="btn white big" onclick="startDaily(0)">Comença →</button></div>';
+  }else{
+    const more=Math.min(10,pool.length);
+    h+='<div class="card"><h2>✓ Sessió d\'avui feta</h2><p class="sub">'+(dt?dt.q+' respostes avui, '+pct(dt.ok,dt.q)+'% d\'encert. ':'')+'Demà tens '+dueOn(tn()+1)+' repassos previstos.</p>'+
+      '<div class="row">'+(more?'<button class="btn pri" onclick="startDaily('+more+')">Aprèn '+more+' capitals més</button>':'')+
+      '<button class="btn" onclick="startSprint()">⚡ Contrarellotge 60 s</button><button class="btn" onclick="go(\'practica\')">Pràctica lliure</button></div>'+
+      (!pool.length&&!unlocked(2)?'<p class="muted" style="margin-top:10px">Ja has vist totes les capitals de la Fase 1. Consolida-les amb els repassos: la Fase 2 s\'obrirà quan en tinguis el 80% apreses (ara '+pct(learnedRatio(1)*100,100)+'%).</p>':'')+'</div>';
+  }
+  const lb=S.lastBackupN||0; if(Object.keys(S.cards).length>20&&tn()-lb>=7)h+='<div class="confirm" style="margin:0 0 14px">💾 Fa més d\'una setmana que no desas cap còpia de seguretat. <button class="btn" style="margin-left:6px;padding:6px 10px" onclick="go(\'ajustos\')">Desa-la</button></div>';
+  const all=C.filter(c=>c.ph<=2).map(c=>c.id), cc=counts(idsOf(1));
+  h+='<div class="grid4" style="margin-bottom:14px">'+
+    tile(st+(st===1?' dia':' dies'),'Ratxa','🔥')+
+    tile(cc[2]+cc[3]+'/155','Fase 1 apresa')+
+    tile(counts(all).slice(2,4).reduce((a,b)=>a+b,0)+'/197','Estats apresos')+
+    tile(autoCount()+'/'+sprintPoolLearned(),'Automàtiques','⚡')+'</div>';
+  h+='<div class="card"><h3>On ets</h3>'+[1,2,3].map(p=>{const ids=idsOf(p),c=counts(ids);return '<div class="prow"><div>'+PH[p].short+(unlocked(p)?'':' 🔒')+'</div>'+phaseBar(ids)+'<div class="pc">'+pct(c[2]+c[3],ids.length)+'%</div></div>';}).join('')+legend()+'</div>';
+  return h;
+}
+function autoCount(){return Object.keys(S.cards).filter(id=>S.cards[id].b>=3&&BY[id]&&spd(id)===2).length;}
+function sprintPoolLearned(){return Object.keys(S.cards).filter(id=>S.cards[id].b>=3&&BY[id]).length;}
+function tile(n,l,ico){return '<div class="tile"><div class="n">'+(ico?ico+' ':'')+n+'</div><div class="l">'+l+'</div></div>';}
+
+/* ============ EXAMEN DE NIVELL ============ */
+function startPlacement(p){
+  let P=S.placement[p];
+  if(!P){
+    const order=[];
+    CONT_ORDER.forEach(ct=>order.push(...shuffle(C.filter(c=>c.ph===p&&c.ct===ct&&bOf(c.id)===0).map(c=>c.id))));
+    P=S.placement[p]={order,res:{},done:false,start:T()};
+  }
+  const items=P.order.filter(id=>!(id in P.res)).map(id=>({id,kind:'pl'}));
+  if(!items.length){finishPlacement(p);return;}
+  startQuiz({kind:'placement',ph:p,title:'Examen de nivell · '+PH[p].short,items,mode:'write',requeue:false,total:P.order.length,done:Object.keys(P.res).length,
+    onFirst:(it,ok)=>{P.res[it.id]=ok?1:0; if(ok){S.cards[it.id]={b:3,d:tn()+2+Math.floor(Math.random()*13),ok:1,ko:0};}},
+    onDone:()=>finishPlacement(p)});
+}
+function finishPlacement(p){
+  const P=S.placement[p]; P.done=true; P.end=T(); save();
+  const byCt={}; P.order.forEach(id=>{const ct=BY[id].ct;byCt[ct]=byCt[ct]||[0,0];byCt[ct][1]++;if(P.res[id]===1)byCt[ct][0]++;});
+  const ok=Object.values(P.res).filter(v=>v===1).length, tot=P.order.length;
+  const miss=P.order.filter(id=>P.res[id]!==1);
+  const days=Math.ceil(miss.length/S.settings.newPerDay);
+  RES={type:'placement',p,ok,tot,byCt,miss,days};
+  route='result';Q=null;render();
+}
+
+/* ============ SESSIÓ DIÀRIA ============ */
+function startDaily(extra){
+  const due=dueIds();
+  const n=extra>0?extra:newLeftToday();
+  const news=newPool().slice(0,n);
+  const items=shuffle([...due.map(id=>({id,kind:'rev'})),...news.map(id=>({id,kind:'new'}))]);
+  if(!items.length){go('avui');return;}
+  const cfg={kind:'daily',title:extra?'Capitals extra':'Sessió d\'avui',items,mode:S.settings.mode,requeue:true,total:items.length,done:0,
+    onFirst:(it,ok,rt,m)=>{srs(it.id,ok,ok&&rt!=null&&spdClass(rt,m)===0); if(it.kind==='new')day().n++;},
+    onDone:(q)=>{RES={type:'daily',q};route='result';Q=null;render();}};
+  if(news.length){ST={list:news,i:0,cfg};route='study';render();window.scrollTo(0,0);}
+  else startQuiz(cfg);
+}
+function vStudy(){
+  const id=ST.list[ST.i],c=BY[id],last=ST.i===ST.list.length-1;
+  return '<div class="qhead"><button class="btn ghost" onclick="go(\'avui\')" aria-label="Surt">✕</button><div class="t">Capitals noves · fitxa '+(ST.i+1)+' de '+ST.list.length+
+    '<div class="prog"><i style="width:'+pct(ST.i+1,ST.list.length)+'%"></i></div></div><button class="btn ghost" onclick="startQuiz(ST.cfg)">Salta al test</button></div>'+
+    '<div class="card qcard study"><div class="flag">'+flag(id)+'</div><div class="country">'+esc(c.country)+'</div>'+
+    '<div class="muted" style="margin-top:6px">'+CONT[c.ct]+'</div><div class="ask" style="margin-top:22px">La capital és</div><div class="cap">'+esc(c.cap)+'</div>'+
+    (c.note?'<div class="note">💡 '+esc(c.note)+'</div>':'')+
+    '<div class="row" style="justify-content:center;margin-top:24px">'+(ST.i>0?'<button class="btn" onclick="ST.i--;render()">← Anterior</button>':'')+
+    (last?'<button class="btn pri" onclick="startQuiz(ST.cfg)">Comença el test →</button>':'<button class="btn pri" onclick="ST.i++;render()">Següent →</button>')+'</div>'+
+    '<div class="kbd">Tecla Enter o → per avançar</div></div>';
+}
+
+/* ============ MOTOR DE TEST ============ */
+let qToken=0, lastAnsAt=0, sprintTimer=null;
+const now=()=>performance.now();
+const SPD=['Lenta','Ràpida','⚡ Automàtica'];
+function spdClass(ms,m){if(ms==null)return -1;return m==='c'?(ms<=2500?2:ms<=4500?1:0):(ms<=2000?2:ms<=4000?1:0);}
+function spd(id){const c=S.cards[id];if(!c)return -1;if(c.rw!=null)return spdClass(c.rw,'w');if(c.rc!=null)return spdClass(c.rc,'c');return -1;}
+function recordSpeed(id,ms,m){
+  const c=S.cards[id]; const x=Math.min(ms,15000);
+  if(c){const k=m==='c'?'rc':'rw';c[k]=c[k]==null?Math.round(x):Math.round(c[k]*0.6+x*0.4);}
+  const d=day();d[m+'s']=(d[m+'s']||0)+Math.round(x);d[m+'n']=(d[m+'n']||0)+1;
+}
+const fmtS=ms=>(ms/1000).toFixed(1).replace('.',',')+' s';
+function startQuiz(cfg){
+  clearInterval(sprintTimer);
+  Q=Object.assign({queue:cfg.items.slice(),first:{},answered:cfg.done||0,cur:null,phase:'ask',wrong:[],nAns:0,nOk:0,firstOk:0,firstN:0,times:[]},cfg);
+  route='quiz';quitAsk=false;
+  if(Q.sprint){Q.endAt=Date.now()+Q.secs*1000;sprintTimer=setInterval(tickSprint,200);}
+  render(); window.scrollTo(0,0); nextQ();
+}
+function makeOpts(id,reverse){
+  const c=BY[id]; const pool=shuffle(C.filter(x=>x.id!==id&&x.ct===c.ct&&(c.ph===3||x.ph<3)));
+  const out=[id],seen=new Set([reverse?c.country:c.cap]);
+  for(const x of pool){const lab=reverse?x.country:x.cap;if(!seen.has(lab)){seen.add(lab);out.push(x.id);}if(out.length===4)break;}
+  return shuffle(out);
+}
+function endQuiz(){clearInterval(sprintTimer);const q=Q;q.onDone(q);}
+function nextQ(){
+  qToken++;
+  if(!Q)return;
+  if(Q.sprint&&Date.now()>=Q.endAt)return endQuiz();
+  if(!Q.queue.length){if(Q.refill)Q.queue=Q.refill();else return endQuiz();}
+  Q.cur=Q.queue.shift();Q.phase='ask';Q.res=null;Q.chosen=null;Q.given='';Q.rt=null;
+  Q.opts=(Q.mode==='choice'||Q.reverse)?makeOpts(Q.cur.id,Q.reverse):null;
+  const inp=document.getElementById('ans');if(inp)inp.value='';
+  paintQuiz();
+  Q.shownAt=now();Q.keyAt=null;
+}
+function tickSprint(){
+  if(!Q||!Q.sprint||route!=='quiz'){clearInterval(sprintTimer);return;}
+  const left=Math.max(0,Q.endAt-Date.now());
+  const a=document.getElementById('sp-left'),b=document.getElementById('sp-bar');
+  if(a)a.textContent=Math.ceil(left/1000)+' s'; if(b)b.style.width=(left*100/(Q.secs*1000))+'%';
+  if(left<=0&&Q.phase==='ask'&&!quitAsk)endQuiz();
+}
+function vQuiz(){return '<div id="qh"></div><div class="card qcard"><div id="qq"></div><div id="qa"></div><div id="qf"></div></div>';}
+function headHTML(){
+  let h='<div class="qhead"><button class="btn ghost" onmousedown="event.preventDefault()" onclick="quitAsk=true;paintQuiz()" aria-label="Surt">✕</button><div class="t">';
+  if(Q.sprint){const left=Math.max(0,Q.endAt-Date.now());
+    h+=esc(Q.title)+' · <b id="sp-left">'+Math.ceil(left/1000)+' s</b> · ✓ '+Q.nOk+' encerts<div class="prog"><i id="sp-bar" style="width:'+(left*100/(Q.secs*1000))+'%;transition:width .2s linear"></i></div>';}
+  else{const rep=Q.queue.filter(x=>x.rep).length;
+    h+=esc(Q.title)+' · '+Q.answered+'/'+Q.total+(rep?' <span class="muted">· '+rep+' per repetir</span>':'')+'<div class="prog"><i style="width:'+pct(Q.answered,Q.total)+'%"></i></div>';}
+  h+='</div></div>';
+  if(quitAsk)h+='<div class="confirm">Vols sortir? Tot el que has respost ja està desat'+(Q.kind==='placement'?' i podràs continuar l\'examen més tard':'')+'.<div class="row" style="margin-top:8px"><button class="btn danger" onclick="go(\'avui\')">Surt</button><button class="btn" onclick="quitAsk=false;paintQuiz()">Continua</button></div></div>';
+  return h;
+}
+function paintQuiz(){
+  if(route!=='quiz'||!Q||!Q.cur)return;
+  const it=Q.cur,c=BY[it.id];
+  document.getElementById('qh').innerHTML=headHTML();
+  let q='';
+  if(Q.reverse)q+='<div class="ask">De quin país o territori és capital…</div><div class="country">'+esc(c.cap)+'</div>';
+  else q+='<div class="ask">Quina és la capital de…</div><div class="flag">'+flag(it.id)+'</div><div class="country">'+esc(c.country)+'</div>';
+  q+='<div class="meta"><span class="pill gray">'+CONT[c.ct]+'</span>'+(it.kind==='new'?' <span class="pill">nova</span>':'')+(it.rep?' <span class="pill gray">repetició</span>':'')+'</div>';
+  document.getElementById('qq').innerHTML=q;
+  const qa=document.getElementById('qa');
+  if(Q.opts){
+    qa.innerHTML='<div class="opts">'+Q.opts.map((oid,i)=>{const lab=Q.reverse?BY[oid].country:BY[oid].cap;let cls='opt';
+      if(Q.phase==='feedback'){if(oid===it.id)cls+=' right';else if(oid===Q.chosen)cls+=' wrong';}
+      return '<button class="'+cls+'" '+(Q.phase==='feedback'?'disabled':'')+' onclick="choose(\''+oid+'\')"><span class="k">'+(i+1)+'</span>'+esc(lab)+'</button>';}).join('')+'</div>'+
+      (Q.phase==='ask'?'<div class="kbd">Tecles 1–4 per triar</div>':'');
+  }else{
+    let inp=document.getElementById('ans');
+    if(!inp){
+      qa.innerHTML='<form class="ansrow" onsubmit="event.preventDefault();formSubmit()"><input id="ans" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="go" placeholder="Escriu la capital…"><button class="btn pri" type="submit" id="qsub" onmousedown="event.preventDefault()">Comprova</button></form><div id="qextra"></div>';
+      inp=document.getElementById('ans');
+      inp.addEventListener('input',()=>{if(Q&&Q.phase==='ask'&&Q.keyAt==null)Q.keyAt=now();});
+    }
+    const sub=document.getElementById('qsub'),ex=document.getElementById('qextra');
+    if(Q.phase==='ask'){inp.readOnly=false;sub.textContent='Comprova';
+      ex.innerHTML='<div class="row" style="justify-content:center;margin-top:10px"><button class="btn ghost" onmousedown="event.preventDefault()" onclick="dontKnow()">No ho sé</button></div><div class="kbd">Enter per comprovar · no cal posar accents</div>';
+      if(document.activeElement!==inp&&!quitAsk)inp.focus({preventScroll:true});}
+    else{inp.readOnly=true;sub.textContent='Continua →';ex.innerHTML='<div class="kbd">Enter per continuar</div>';}
+  }
+  let f='';
+  if(Q.phase==='feedback'){
+    const r=Q.res, ans=Q.reverse?c.country:c.cap;
+    const sp=(r.ok&&Q.rt!=null&&!Q.reverse)?(()=>{const k=spdClass(Q.rt,Q.opts?'c':'w');return '<div class="note">⏱ '+fmtS(Q.rt)+' · '+SPD[k]+'</div>';})():'';
+    if(r.ok){f+='<div class="fb ok"><div class="h">✓ Correcte!'+(r.typo?' (vigila l\'ortografia)':'')+'</div>'+(r.typo||(!Q.opts&&!Q.sprint)?'<div class="cap">'+esc(ans)+'</div>':'')+sp+(c.note&&!Q.sprint?'<div class="note">💡 '+esc(c.note)+'</div>':'')+'</div>';}
+    else{f+='<div class="fb ko"><div class="h">✗ '+(Q.given?'No és correcte':'Cap problema, ara ja la saps')+'</div><div class="note" style="margin-top:2px">'+(Q.reverse?'És la capital de':'Resposta correcta')+'</div><div class="cap">'+esc(ans)+'</div>'+
+      (Q.given&&!Q.opts?'<div class="note">Has escrit: «'+esc(Q.given)+'»</div>':'')+(c.note&&!Q.sprint?'<div class="note">💡 '+esc(c.note)+'</div>':'')+(Q.requeue?'<div class="note">Te la tornaré a preguntar d\'aquí a una estona.</div>':'')+'</div>';}
+    if(Q.opts)f+='<div class="row" style="justify-content:center;margin-top:16px"><button class="btn pri" id="cont" onclick="cont()">Continua →</button></div><div class="kbd">Enter per continuar</div>';
+  }
+  document.getElementById('qf').innerHTML=f;
+}
+function afterQuiz(){}
+function formSubmit(){if(!Q)return;if(Q.phase==='feedback'){if(Date.now()-lastAnsAt>250)cont();return;}submitWrite();}
+function submitWrite(){const i=document.getElementById('ans');const v=i?i.value.trim():'';if(!v)return dontKnow();answer(check(Q.cur.id,v),v);}
+function dontKnow(){if(Q&&Q.phase==='ask')answer({ok:false,typo:false},'');}
+function choose(oid){if(!Q||Q.phase!=='ask')return;Q.chosen=oid;answer({ok:oid===Q.cur.id,typo:false},Q.reverse?BY[oid].country:BY[oid].cap);}
+function answer(res,given){
+  if(Q.phase!=='ask')return;
+  const t=now(); const it=Q.cur;
+  let rt=null; if(given)rt=Q.opts?t-Q.shownAt:((Q.keyAt!=null?Q.keyAt:t)-Q.shownAt);
+  Q.res=res; Q.given=given; Q.rt=rt; Q.phase='feedback'; lastAnsAt=Date.now();
+  const m=Q.opts?'c':'w';
+  const first=!(it.id in Q.first);
+  if(first){Q.first[it.id]=res.ok;Q.answered++;Q.firstN++;if(res.ok)Q.firstOk++;if(Q.onFirst)Q.onFirst(it,res.ok,rt,m);}
+  if(res.ok&&rt!=null&&!Q.reverse){recordSpeed(it.id,rt,m);Q.times.push(rt);}
+  Q.nAns++;if(res.ok)Q.nOk++;
+  const d=day();d.q++;if(res.ok)d.ok++;
+  if(!res.ok){if(!Q.wrong.includes(it.id))Q.wrong.push(it.id);
+    if(Q.requeue){const pos=Math.min(Q.queue.length,3+Math.floor(Math.random()*3));Q.queue.splice(pos,0,{id:it.id,kind:it.kind,rep:true});}}
+  save(); paintQuiz();
+  const tk=qToken; let wait=null;
+  if(Q.sprint)wait=res.ok?(res.typo?900:300):1500;
+  else if(res.ok&&!res.typo)wait=BY[it.id].note?2200:900;
+  if(wait!=null)setTimeout(()=>{if(Q&&tk===qToken&&Q.phase==='feedback'&&!quitAsk)cont();},wait);
+}
+function cont(){if(!Q||Q.phase!=='feedback')return;nextQ();}
+document.addEventListener('keydown',e=>{
+  if(route==='study'){if(e.key==='Enter'||e.key==='ArrowRight'){e.preventDefault();if(ST.i<ST.list.length-1){ST.i++;render();}else startQuiz(ST.cfg);}else if(e.key==='ArrowLeft'&&ST.i>0){ST.i--;render();}return;}
+  if(route!=='quiz'||!Q||quitAsk)return;
+  if(e.target&&e.target.id==='ans')return;
+  if(Q.phase==='feedback'&&e.key==='Enter'){if(Date.now()-lastAnsAt<250)return;e.preventDefault();cont();return;}
+  if(Q.phase==='ask'&&Q.opts&&/^[1-4]$/.test(e.key)){const o=Q.opts[+e.key-1];if(o)choose(o);}
+});
+
+/* ============ CONTRARELLOTGE ============ */
+let SP={mode:'write'};
+function sprintPool(){
+  let pool=Object.keys(S.cards).filter(id=>S.cards[id].b>=3&&BY[id]);
+  if(pool.length<8)pool=Object.keys(S.cards).filter(id=>S.cards[id].b>=1&&BY[id]);
+  return pool;
+}
+function bestSprint(m){return (S.sprints||[]).filter(s=>s.m===m).reduce((a,s)=>Math.max(a,s.n),0);}
+function startSprint(o){
+  o=o||{}; if(o.mode)SP.mode=o.mode;
+  const mode=SP.mode; const pool=o.ids&&o.ids.length>=4?o.ids:sprintPool();
+  if(pool.length<4){go('practica');setTimeout(()=>{const m=document.getElementById('spmsg');if(m)m.textContent='Encara no tens prou capitals apreses. Fes primer l\'examen de nivell.';},0);return;}
+  const build=()=>{const slow=pool.filter(id=>spd(id)<=0);return shuffle([...pool,...slow]).map(id=>({id,kind:'sp'}));};
+  const prev=bestSprint(mode);
+  startQuiz({kind:'sprint',sprint:true,secs:60,title:'⚡ Contrarellotge',items:build(),refill:build,mode,requeue:false,total:0,done:0,
+    onDone:(q)=>{const avg=q.times.length?Math.round(q.times.reduce((a,b)=>a+b,0)/q.times.length):null;
+      S.sprints=(S.sprints||[]);S.sprints.push({d:T(),m:mode,n:q.nOk,e:q.nAns-q.nOk,a:avg});if(S.sprints.length>150)S.sprints=S.sprints.slice(-150);save();
+      RES={type:'sprint',q,avg,prev,record:q.nOk>prev&&prev>0,first:prev===0,o};route='result';Q=null;render();}});
+}
+
+/* ============ RESULTATS ============ */
+function vResult(){
+  if(!RES)return vAvui();
+  let h='';
+  if(RES.type==='sprint'){
+    const q=RES.q;
+    h+='<div class="card" style="text-align:center;padding:28px"><div class="muted">⚡ Contrarellotge 60 s · '+(RES.q.mode==='choice'?'opcions':'escrivint')+'</div><div class="res-big" style="margin:10px 0">'+q.nOk+'</div><div class="sub">encerts en 60 segons'+(q.nAns-q.nOk?' · '+(q.nAns-q.nOk)+' errors':'')+'</div>'+
+      (RES.record?'<span class="pill g">🏆 Nou rècord! (abans '+RES.prev+')</span>':RES.first?'<span class="pill">Primer registre</span>':'<span class="pill gray">Rècord: '+Math.max(RES.prev,q.nOk)+'</span>')+
+      (RES.avg!=null?'<p class="sub" style="margin-top:12px">Temps de reacció mitjà: <b>'+fmtS(RES.avg)+'</b> · '+SPD[spdClass(RES.avg,RES.q.mode==='choice'?'c':'w')]+'</p>':'')+
+      '<div class="row" style="justify-content:center;margin-top:10px"><button class="btn pri" onclick="startSprint(RES.o)">⚡ Una altra</button><button class="btn" onclick="go(\'avui\')">Inici</button></div></div>';
+    if(q.wrong.length)h+='<div class="card"><h3>Errors d\'aquesta ronda</h3><div class="mistakes">'+q.wrong.map(id=>'<div>'+flag(id)+' '+esc(BY[id].country)+' — <b>'+esc(BY[id].cap)+'</b></div>').join('')+'</div></div>';
+    return h;
+  }
+  if(RES.type==='placement'){
+    const r=RES.ok/RES.tot;
+    h+='<div class="card" style="text-align:center;padding:28px"><div class="muted">Resultat de l\'examen de nivell · '+PH[RES.p].short+'</div><div class="res-big" style="margin:10px 0">'+RES.ok+' / '+RES.tot+'</div>'+
+      '<span class="pill">'+pct(RES.ok,RES.tot)+'% · Nivell '+level(r)+'</span>'+
+      '<p class="sub" style="margin-top:14px">Les '+RES.ok+' que ja saps queden com a <b>apreses</b> i les repassaràs en els propers dies per confirmar-les. Te\'n queden <b>'+RES.miss.length+'</b> per aprendre: amb '+S.settings.newPerDay+' noves al dia, les hauràs vist totes en uns <b>'+RES.days+' dies</b> (cap al '+fmtDY(tn()+RES.days)+').</p>'+
+      '<div class="row" style="justify-content:center"><button class="btn pri big" onclick="go(\'avui\')">Veure la sessió d\'avui →</button></div></div>';
+    h+='<div class="card"><h3>Per continents</h3>'+CONT_ORDER.filter(ct=>RES.byCt[ct]).map(ct=>{const [a,b]=RES.byCt[ct];
+      return '<div class="prow"><div>'+CONT[ct]+'</div><div class="bar">'+(a?'<span style="width:'+(a*100/b)+'%;background:var(--s2)" data-tip="Encerts: '+a+'"></span>':'')+(b-a?'<span style="width:'+((b-a)*100/b)+'%;background:var(--s0)" data-tip="Per aprendre: '+(b-a)+'"></span>':'')+'</div><div class="pc">'+a+'/'+b+'</div></div>';}).join('')+
+      '<div class="legend"><span><i class="sw" style="background:var(--s2)"></i>Encertades</span><span><i class="sw" style="background:var(--s0)"></i>Per aprendre</span></div></div>';
+    if(RES.miss.length)h+='<div class="card"><details><summary>Veure les '+RES.miss.length+' que aprendràs</summary><div class="mistakes" style="margin-top:10px">'+RES.miss.map(id=>'<div>'+flag(id)+' '+esc(BY[id].country)+' — <b>'+esc(BY[id].cap)+'</b></div>').join('')+'</div></details></div>';
+  }else{
+    const q=RES.q;
+    h+='<div class="card" style="text-align:center;padding:28px"><div class="muted">'+esc(q.title)+' completada</div><div class="res-big" style="margin:10px 0">'+pct(q.firstOk,q.firstN)+'%</div>'+
+      '<div class="sub">d\'encerts a la primera ('+q.firstOk+' de '+q.firstN+')</div>'+
+      (q.kind==='daily'?'<p class="sub">🔥 Ratxa: '+streak()+' '+(streak()===1?'dia':'dies')+' · Demà: '+dueOn(tn()+1)+' repassos</p>':'')+
+      '<div class="row" style="justify-content:center;margin-top:10px"><button class="btn pri" onclick="go(\'avui\')">Tornar a l\'inici</button>'+(q.kind==='free'?'<button class="btn" onclick="startFree()">Una altra ronda</button>':'<button class="btn" onclick="startSprint()">⚡ Contrarellotge 60 s</button>')+'</div></div>';
+    if(q.wrong.length)h+='<div class="card"><h3>Les que t\'han costat</h3><div class="mistakes">'+q.wrong.map(id=>'<div>'+flag(id)+' '+esc(BY[id].country)+' — <b>'+esc(BY[id].cap)+'</b></div>').join('')+'</div></div>';
+  }
+  return h;
+}
+
+/* ============ VISTA: PROGRÉS ============ */
+function vProgres(){
+  const op=openPhases(), OPEN=C.filter(c=>op.includes(c.ph)).map(c=>c.id), st=counts(OPEN);
+  const opTxt=op.map(p=>PH[p].short).join(' i ');
+  let q7=0,ok7=0;for(let d=tn()-6;d<=tn();d++){const r=S.days[nkey(d)];if(r){q7+=r.q;ok7+=r.ok;}}
+  let h='<div class="grid4" style="margin-bottom:14px">'+
+    '<div class="tile"><div class="n">'+st[3]+'</div><div class="l"><i class="sw" style="background:var(--s3)"></i>Dominades</div></div>'+
+    '<div class="tile"><div class="n">'+st[2]+'</div><div class="l"><i class="sw" style="background:var(--s2)"></i>Apreses</div></div>'+
+    '<div class="tile"><div class="n">'+st[1]+'</div><div class="l"><i class="sw" style="background:var(--s1)"></i>En procés</div></div>'+
+    '<div class="tile"><div class="n">'+st[0]+(st[4]?' <span class="muted" style="font-size:14px;font-weight:500">+ '+st[4]+' no vistes</span>':'')+'</div><div class="l"><i class="sw" style="background:var(--s0)"></i>Per aprendre</div></div></div>'+
+    '<p class="muted" style="margin:-6px 0 14px">Sobre les '+OPEN.length+' capitals de les fases obertes ('+opTxt+'). Les de fases encara tancades no compten fins que s\'obren. Apresa = l\'has encertat en repassos espaiats durant almenys una setmana; dominada = més de dues setmanes.</p>';
+  h+='<div class="grid3" style="margin-bottom:14px">'+tile(streak()+(streak()===1?' dia':' dies'),'Ratxa actual','🔥')+tile(q7?pct(ok7,q7)+'%':'—','Encert últims 7 dies')+tile(q7,'Respostes últims 7 dies')+'</div>';
+  h+='<div class="card"><h3>Capitals apreses dia a dia</h3><div class="chart" id="lc">'+lineChart()+'</div></div>';
+  h+='<div class="card"><h3>Activitat (últimes 13 setmanes)</h3><div class="chart hm" id="hm">'+heatmap()+'</div></div>';
+  h+=speedCard();
+  h+='<div class="card"><h3>Per fases</h3>'+[1,2,3].map(p=>{const ids=idsOf(p),c=counts(ids);return '<div class="prow"><div>'+PH[p].short+' <span class="muted">('+ids.length+')</span></div>'+phaseBar(ids)+'<div class="pc">'+pct(c[2]+c[3],ids.length)+'%</div></div>';}).join('')+
+    '<h3 style="margin-top:18px">Per continents <span class="muted">('+opTxt+')</span></h3>'+CONT_ORDER.map(ct=>{const ids=C.filter(c=>c.ct===ct&&op.includes(c.ph)).map(c=>c.id),c=counts(ids);return '<div class="prow"><div>'+CONT[ct]+(c[4]?' <span class="muted">('+c[4]+' sense veure)</span>':'')+'</div>'+phaseBar(ids)+'<div class="pc" data-tip="Apreses sobre les que ja t\'han sortit">'+(c[2]+c[3])+'/'+(ids.length-c[4])+'</div></div>';}).join('')+legend()+
+    '<details style="margin-top:12px"><summary>Veure com a taula</summary><table class="tbl"><tr><th>Grup</th>'+[3,2,1,0,4].map(i=>'<th>'+STATUS[i]+'</th>').join('')+'</tr>'+
+    [1,2,3].map(p=>{const c=counts(idsOf(p));return '<tr><td>'+PH[p].short+'</td>'+[3,2,1,0,4].map(i=>'<td>'+c[i]+'</td>').join('')+'</tr>';}).join('')+
+    CONT_ORDER.map(ct=>{const c=counts(C.filter(x=>x.ct===ct&&op.includes(x.ph)).map(x=>x.id));return '<tr><td>'+CONT[ct]+'</td>'+[3,2,1,0,4].map(i=>'<td>'+c[i]+'</td>').join('')+'</tr>';}).join('')+'</table></details></div>';
+  const hard=Object.keys(S.cards).filter(id=>S.cards[id].ko>0&&BY[id]).sort((a,b)=>S.cards[b].ko-S.cards[a].ko||S.cards[a].b-S.cards[b].b).slice(0,12);
+  h+='<div class="card"><h3>Les que més et costen</h3>'+(hard.length?'<div class="mistakes">'+hard.map(id=>'<div>'+flag(id)+' '+esc(BY[id].country)+' — <b>'+esc(BY[id].cap)+'</b> <span class="muted">('+S.cards[id].ko+' '+(S.cards[id].ko===1?'error':'errors')+')</span></div>').join('')+'</div><div class="row" style="margin-top:12px"><button class="btn" onclick="startFree({src:\'hard\'})">Practica aquestes</button></div>':'<p class="muted">Encara no hi ha errors registrats als repassos.</p>')+'</div>';
+  return h;
+}
+function speedCard(){
+  const L=Object.keys(S.cards).filter(id=>S.cards[id].b>=3&&BY[id]);
+  const k=[0,0,0,0]; L.forEach(id=>k[spd(id)+1]++); // -1..2 -> 0..3
+  const lab=['Sense mesura','Lenta','Ràpida','⚡ Automàtica'];
+  const bw=bestSprint('write'),bc=bestSprint('choice');
+  let h='<div class="card"><h3>Rapidesa (sobre les '+L.length+' apreses)</h3><p class="muted" style="margin-top:-4px">Temps de reacció: des que surt el país fins que comences a escriure. ⚡ Automàtica: menys de 2 s (2,5 s amb opcions); ràpida: fins a 4 s. Una apresa lenta no passa a «dominada» fins que surti ràpida.</p>';
+  h+=L.length?'<div class="bar" style="margin-top:10px">'+[3,2,1,0].map(i=>k[i]?'<span style="width:'+(k[i]*100/L.length)+'%;background:var(--p'+i+')" data-tip="'+lab[i]+': '+k[i]+'"></span>':'').join('')+'</div>'+
+    '<div class="legend">'+[3,2,1,0].map(i=>'<span><i class="sw" style="background:var(--p'+i+')"></i>'+lab[i]+' '+k[i]+'</span>').join('')+'</div>':'<p class="muted">Encara no hi ha capitals apreses.</p>';
+  h+='<div class="grid3" style="margin-top:14px">'+tile(bw||'—','Rècord 60 s escrivint','⚡')+tile(bc||'—','Rècord 60 s opcions','⚡')+tile((S.sprints||[]).length,'Contrarellotges fetes')+'</div>';
+  h+='<h3 style="margin-top:18px">Temps de reacció mitjà per dia</h3><div class="chart">'+rtChart()+'</div>';
+  const slow=L.filter(id=>spd(id)>=0).sort((a,b)=>(S.cards[b].rw!=null?S.cards[b].rw:S.cards[b].rc*0.8)-(S.cards[a].rw!=null?S.cards[a].rw:S.cards[a].rc*0.8)).slice(0,10);
+  if(slow.length){window._slow=slow;h+='<h3 style="margin-top:18px">Les apreses més lentes</h3><div class="mistakes">'+slow.map(id=>{const c=S.cards[id],ms=c.rw!=null?c.rw:c.rc;return '<div>'+flag(id)+' '+esc(BY[id].country)+' — <b>'+esc(BY[id].cap)+'</b> <span class="muted">('+fmtS(ms)+')</span></div>';}).join('')+'</div>'+
+    '<div class="row" style="margin-top:12px"><button class="btn" onclick="startSprint({ids:window._slow.concat(window._slow)})">⚡ Contrarellotge amb aquestes</button></div>';}
+  return h+'</div>';
+}
+function rtChart(){
+  const end=tn(); const pts=[];
+  for(let d=end-59;d<=end;d++){const r=S.days[nkey(d)];if(r&&((r.wn||0)+(r.cn||0))>0)pts.push({d,w:r.wn?r.ws/r.wn/1000:null,c:r.cn?r.cs/r.cn/1000:null});}
+  if(!pts.length)return '<p class="muted">Apareixerà quan responguis amb el comptador actiu.</p>';
+  const start=Math.min(pts[0].d,end-6);
+  const W=540,H=200,pl=34,pr=20,pt=12,pb=26,iw=W-pl-pr,ih=H-pt-pb;
+  const mx=Math.max(4,...pts.map(p=>Math.max(p.w||0,p.c||0))); const ym=Math.ceil(mx/2)*2;
+  const x=d=>pl+(end===start?iw/2:(d-start)*iw/(end-start)), y=v=>pt+ih-v*ih/ym;
+  let s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Temps de reacció mitjà per dia">';
+  for(let v=0;v<=ym;v+=Math.max(1,ym/4)){s+='<line x1="'+pl+'" x2="'+(pl+iw)+'" y1="'+y(v)+'" y2="'+y(v)+'" stroke="var(--grid)"/><text x="'+(pl-6)+'" y="'+(y(v)+4)+'" text-anchor="end">'+v+' s</text>';}
+  s+='<line x1="'+pl+'" x2="'+(pl+iw)+'" y1="'+y(2)+'" y2="'+y(2)+'" stroke="var(--muted)" stroke-dasharray="3 4"/><text x="'+(pl+iw)+'" y="'+(y(2)-5)+'" text-anchor="end">llindar automàtica</text>';
+  [start,Math.round((start+end)/2),end].forEach(d=>{s+='<text x="'+x(d)+'" y="'+(H-6)+'" text-anchor="middle">'+fmtD(d)+'</text>';});
+  [['w','var(--ser1)','Escrivint'],['c','var(--ser2)','Opcions']].forEach(([k,col,nm])=>{const q=pts.filter(p=>p[k]!=null);if(!q.length)return;
+    if(q.length>1)s+='<path d="'+q.map((p,i)=>(i?'L':'M')+x(p.d).toFixed(1)+' '+y(p[k]).toFixed(1)).join(' ')+'" fill="none" stroke="'+col+'" stroke-width="2"/>';
+    q.forEach(p=>{s+='<circle cx="'+x(p.d)+'" cy="'+y(p[k])+'" r="5" fill="'+col+'" stroke="var(--card)" stroke-width="2" data-tip="'+fmtDY(p.d)+' · '+nm+': '+p[k].toFixed(1).replace('.',',')+' s"/>';});});
+  s+='</svg><div class="legend"><span><i class="sw" style="background:var(--ser1)"></i>Escrivint</span><span><i class="sw" style="background:var(--ser2)"></i>Opcions</span><span>Més avall = més ràpid</span></div>';
+  return s;
+}
+function lineChart(){
+  const keys=Object.keys(S.days).filter(k=>S.days[k].q>0).sort();
+  if(!keys.length)return '<p class="muted">Encara no hi ha dades. Comença per l\'examen de nivell!</p>';
+  const end=tn(); let start=Math.max(dnum(keys[0]),end-89); if(end-start<6)start=end-6;
+  let L=0,M=0; keys.forEach(k=>{if(dnum(k)<start){L=S.days[k].l;M=S.days[k].m;}});
+  const pts=[]; for(let d=start;d<=end;d++){const r=S.days[nkey(d)];if(r&&r.q>0){L=r.l;M=r.m;}pts.push({d,l:L,m:M,act:!!(r&&r.q>0)});}
+  window._lc=pts;
+  const W=540,H=230,pl=34,pr=108,pt=12,pb=26,iw=W-pl-pr,ih=H-pt-pb;
+  const mx=Math.max(...pts.map(p=>p.l),10); const step=mx<=20?5:mx<=60?20:mx<=120?40:50; const ym=Math.ceil(mx/step)*step;
+  const x=i=>pl+(pts.length===1?iw/2:i*iw/(pts.length-1)), y=v=>pt+ih-v*ih/ym;
+  let s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Evolució de capitals apreses i dominades">';
+  for(let v=0;v<=ym;v+=step){s+='<line x1="'+pl+'" x2="'+(pl+iw)+'" y1="'+y(v)+'" y2="'+y(v)+'" stroke="var(--grid)" stroke-width="1"/><text x="'+(pl-6)+'" y="'+(y(v)+4)+'" text-anchor="end">'+v+'</text>';}
+  const nl=Math.min(5,pts.length);for(let j=0;j<nl;j++){const i=Math.round(j*(pts.length-1)/Math.max(1,nl-1));s+='<text x="'+x(i)+'" y="'+(H-6)+'" text-anchor="middle">'+fmtD(pts[i].d)+'</text>';}
+  const path=k=>pts.map((p,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(p[k]).toFixed(1)).join(' ');
+  s+='<path d="'+path('l')+'" fill="none" stroke="var(--ser1)" stroke-width="2" stroke-linejoin="round"/>';
+  s+='<path d="'+path('m')+'" fill="none" stroke="var(--ser2)" stroke-width="2" stroke-linejoin="round"/>';
+  const li=pts.length-1, yl=y(pts[li].l), ym2=y(pts[li].m); let a=yl,b=ym2; if(Math.abs(a-b)<16){if(a<=b)b=a+16;else a=b+16;}
+  s+='<circle cx="'+x(li)+'" cy="'+yl+'" r="4" fill="var(--ser1)" stroke="var(--card)" stroke-width="2"/><circle cx="'+x(li)+'" cy="'+ym2+'" r="4" fill="var(--ser2)" stroke="var(--card)" stroke-width="2"/>';
+  s+='<text class="lbl" x="'+(x(li)+10)+'" y="'+(a+4)+'">Apreses '+pts[li].l+'</text><text class="lbl" x="'+(x(li)+10)+'" y="'+(b+4)+'">Dominades '+pts[li].m+'</text>';
+  s+='<line id="lc-x" x1="0" x2="0" y1="'+pt+'" y2="'+(pt+ih)+'" stroke="var(--muted)" stroke-width="1" opacity="0"/>';
+  s+='<rect id="lc-hit" x="'+pl+'" y="'+pt+'" width="'+iw+'" height="'+ih+'" fill="transparent"/></svg>';
+  s+='<div class="legend"><span><i class="sw" style="background:var(--ser1)"></i>Apreses o dominades</span><span><i class="sw" style="background:var(--ser2)"></i>Dominades</span></div>';
+  window._lcg={pl,iw,W,n:pts.length};
+  return s;
+}
+function heatmap(){
+  const end=tn(), endDow=(end+3)%7, last=end+(6-endDow), first=last-13*7+1;
+  const cell=15,gap=3,W=13*(cell+gap)+30,H=7*(cell+gap)+20;
+  let s='<svg viewBox="0 0 '+W+' '+H+'" style="max-width:'+(W*1.6)+'px" role="img" aria-label="Respostes per dia">';
+  ['dl','','dc','','dv','','dg'].forEach((t,i)=>{if(t)s+='<text x="0" y="'+(20+i*(cell+gap)+11)+'">'+t+'</text>';});
+  for(let w=0;w<13;w++){const d0=first+w*7;const dd=new Date(d0*864e5);if(dd.getUTCDate()<=7)s+='<text x="'+(30+w*(cell+gap))+'" y="11">'+MESOS[dd.getUTCMonth()]+'</text>';
+    for(let i=0;i<7;i++){const d=d0+i;if(d>end)continue;const r=S.days[nkey(d)];const q=r?r.q:0;const lv=q===0?0:q<=15?1:q<=40?2:q<=90?3:4;
+      s+='<rect x="'+(30+w*(cell+gap))+'" y="'+(20+i*(cell+gap))+'" width="'+cell+'" height="'+cell+'" rx="3" fill="var(--h'+lv+')" data-tip="'+fmtDY(d)+': '+(q?q+' respostes, '+pct(r.ok,q)+'% encert':'sense activitat')+'"/>';}}
+  s+='</svg><div class="legend"><span>Menys</span>'+[0,1,2,3,4].map(i=>'<i class="sw" style="background:var(--h'+i+')"></i>').join('')+'<span>Més respostes</span></div>';
+  return s;
+}
+const tip=()=>document.getElementById('tip');
+function showTip(html,x,y){const t=tip();t.innerHTML=html;t.classList.add('on');const w=t.offsetWidth,h=t.offsetHeight;let lx=x+14,ly=y-h-10;if(lx+w>innerWidth-8)lx=x-w-14;if(ly<8)ly=y+16;t.style.left=lx+'px';t.style.top=ly+'px';}
+function hideTip(){const t=tip();if(t)t.classList.remove('on');}
+document.addEventListener('mouseover',e=>{const el=e.target.closest&&e.target.closest('[data-tip]');if(el)showTip(esc(el.getAttribute('data-tip')),e.clientX,e.clientY);});
+document.addEventListener('mousemove',e=>{const el=e.target.closest&&e.target.closest('[data-tip]');if(el)showTip(esc(el.getAttribute('data-tip')),e.clientX,e.clientY);else if(!(e.target.id==='lc-hit'))hideTip();});
+function bindCharts(){
+  const hit=document.getElementById('lc-hit');if(!hit)return;
+  const svg=hit.ownerSVGElement, ln=document.getElementById('lc-x');
+  const mv=e=>{const p=e.touches?e.touches[0]:e;const r=svg.getBoundingClientRect();const sx=(p.clientX-r.left)*_lcg.W/r.width;
+    let i=Math.round((sx-_lcg.pl)/(_lcg.iw/Math.max(1,_lcg.n-1)));i=Math.max(0,Math.min(_lcg.n-1,i));const pt=_lc[i];
+    const xx=_lcg.pl+(_lcg.n===1?_lcg.iw/2:i*_lcg.iw/(_lcg.n-1));ln.setAttribute('x1',xx);ln.setAttribute('x2',xx);ln.setAttribute('opacity','.6');
+    showTip('<b>'+fmtDY(pt.d)+'</b><br>Apreses o dominades: '+pt.l+'<br>Dominades: '+pt.m+(pt.act?'':'<br><span style="opacity:.7">sense activitat</span>'),p.clientX,p.clientY);};
+  hit.addEventListener('mousemove',mv);hit.addEventListener('touchmove',mv,{passive:true});
+  hit.addEventListener('mouseleave',()=>{ln.setAttribute('opacity','0');hideTip();});
+}
+
+/* ============ VISTA: PLA ============ */
+function vPla(){
+  const npd=S.settings.newPerDay;
+  let h='<div class="card"><h2>El pla</h2><p class="sub">Objectiu: les 197 capitals d\'estats del món i, després, '+idsOf(3).length+' territoris. Primer les essencials; quan les tinguis consolidades, ampliem.</p>'+
+    '<div class="kv"><span>Avui</span><b>Examen de nivell de la Fase 1 (155)</b></div>'+
+    '<div class="kv"><span>Cada dia (10–15 min)</span><b>Repassos que toquen + '+npd+' capitals noves</b></div>'+
+    '<div class="kv"><span>Després de la sessió (1 min)</span><b>⚡ Contrarellotge de 60 s amb les apreses</b></div>'+
+    '<div class="kv"><span>Quan vulguis</span><b>Pràctica lliure (per continents, mode invers…)</b></div>'+
+    '<div class="kv"><span>Si un dia no pots</span><b>No passa res: els repassos t\'esperen</b></div></div>';
+  [1,2,3].map(p=>{
+    const ids=idsOf(p),c=counts(ids),rem=remainingNew(p),un=unlocked(p),pi=placementInfo(p);
+    let eta='';
+    if(rem===0)eta='Totes introduïdes ✓';
+    else if(un){let before=0;for(let q=1;q<p;q++)before+=remainingNew(q);const dd=Math.ceil((before+rem)/npd);eta='Les hauràs vist totes cap al <b>'+fmtDY(tn()+dd)+'</b> ('+dd+' dies a '+npd+'/dia)';}
+    else eta='🔒 S\'obre quan tinguis el 80% de la '+PH[p-1].short+' apresa (ara '+Math.round(learnedRatio(p-1)*100)+'%)';
+    let pl='';
+    if(p===1){pl=pi?(pi.P.done?'<span class="pill g">Examen fet: '+pi.ok+'/'+pi.total+'</span>':'<button class="btn pri" onclick="startPlacement(1)">Continua l\'examen ('+pi.ans+'/'+pi.total+')</button>'):'<button class="btn pri" onclick="startPlacement(1)">Fes l\'examen de nivell</button>';}
+    else if(placementDone(1)&&rem>0){pl=pi&&pi.P.done?'<span class="pill g">Examen fet: '+pi.ok+'/'+pi.total+'</span>':'<button class="btn" onclick="startPlacement('+p+')">'+(pi?'Continua':'Fes')+' l\'examen de nivell ('+rem+')</button><div class="muted" style="margin-top:6px">Opcional: si ja en saps unes quantes, t\'estalvies estudiar-les.</div>';}
+    h+='<div class="card"><h2>'+PH[p].name+' <span class="muted" style="font-family:-apple-system,system-ui,sans-serif;font-size:14px">· '+ids.length+'</span></h2><p class="sub">'+PH[p].desc+'</p>'+phaseBar(ids)+
+      '<div class="legend">'+[3,2,1,0,4].map(i=>'<span><i class="sw" style="background:var(--s'+i+')"></i>'+STATUS[i]+' '+c[i]+'</span>').join('')+'</div>'+
+      '<p class="sub" style="margin:12px 0">'+eta+'</p>'+pl+'</div>';
+  });
+  const st=streak(), F1=idsOf(1),F2=idsOf(2), allS=[...F1,...F2], allT=C.map(c=>c.id);
+  const ln=ids=>ids.filter(id=>bOf(id)>=3).length, dm=ids=>ids.filter(id=>bOf(id)>=5).length;
+  const best=(()=>{let b=0,cur=0;const ks=Object.keys(S.days).filter(k=>S.days[k].q>0).map(dnum).sort((a,b)=>a-b);ks.forEach((d,i)=>{cur=(i&&d===ks[i-1]+1)?cur+1:1;b=Math.max(b,cur);});return b;})();
+  const M=[
+    [placementDone(1),'Examen de nivell fet'],
+    [remainingNew(1)===0,'Totes les capitals de la Fase 1 vistes'],
+    [ln(F1)>=124,'80% de la Fase 1 apresa → s\'obre la Fase 2 ('+ln(F1)+'/124)'],
+    [dm(F1)===155,'Fase 1 dominada del tot ('+dm(F1)+'/155)'],
+    [ln(F2)>=34,'80% de la Fase 2 apresa → s\'obre la Fase 3 ('+ln(F2)+'/34)'],
+    [ln(allS)===197,'Les 197 capitals d\'estats apreses ('+ln(allS)+'/197)'],
+    [ln(allT)===allT.length,'Totes les '+allT.length+' capitals apreses, territoris inclosos'],
+    [autoCount()>=50,'50 capitals automàtiques ⚡ ('+autoCount()+'/50)'],[autoCount()>=150,'150 capitals automàtiques ⚡ ('+autoCount()+'/150)'],
+    [Math.max(bestSprint('write'),bestSprint('choice'))>=20,'Contrarellotge: 20 encerts en 60 s (rècord '+Math.max(bestSprint('write'),bestSprint('choice'))+')'],
+    [Math.max(bestSprint('write'),bestSprint('choice'))>=30,'Contrarellotge: 30 encerts en 60 s'],
+    [best>=7,'Ratxa de 7 dies'],[best>=30,'Ratxa de 30 dies']];
+  h+='<div class="card"><h2>Fites</h2><ul class="clean mil">'+M.map(([ok,t])=>'<li class="'+(ok?'done':'')+'"><span class="ck">'+(ok?'✓':'')+'</span><div>'+t+'</div></li>').join('')+'</ul></div>';
+  return h;
+}
+
+/* ============ VISTA: LLISTA ============ */
+function vLlista(){
+  const o=listOpts;
+  return '<div class="card"><h2>Totes les capitals</h2><p class="sub">Consulta-les o activa «Amaga les capitals» per autoavaluar-te (toca per revelar).</p>'+
+    '<div class="filters"><input id="lq" placeholder="Cerca país o capital…" value="'+esc(o.q)+'">'+
+    '<select id="lct"><option value="">Tots els continents</option>'+CONT_ORDER.map(c=>'<option value="'+c+'" '+(o.ct===c?'selected':'')+'>'+CONT[c]+'</option>').join('')+'</select>'+
+    '<select id="lph"><option value="">Totes les fases</option>'+[1,2,3].map(p=>'<option value="'+p+'" '+(o.ph==p?'selected':'')+'>'+PH[p].short+'</option>').join('')+'</select>'+
+    '<select id="lst"><option value="">Tots els estats</option>'+[4,0,1,2,3].map(i=>'<option value="'+i+'" '+(o.st===String(i)?'selected':'')+'>'+STATUS[i]+'</option>').join('')+'</select>'+
+    '<label class="chip"><input type="checkbox" id="lhide" '+(o.hide?'checked':'')+'> Amaga les capitals</label></div><div id="lres"></div></div>';
+}
+function listRows(){
+  const o=listOpts,q=norm(o.q);
+  const rows=C.filter(c=>(!o.ct||c.ct===o.ct)&&(!o.ph||c.ph==o.ph)&&(o.st===''||stOf(c.id)===+o.st)&&(!q||norm(c.country).includes(q)||norm(c.cap).includes(q)||c.al.some(a=>norm(a).includes(q))));
+  return '<div class="muted" style="margin-bottom:4px">'+rows.length+' resultats</div>'+rows.map(c=>{const s=stOf(c.id);
+    return '<div class="lrow"><div class="f">'+flag(c.id)+'</div><div>'+esc(c.country)+'</div><div class="cap'+(o.hide?' hid':'')+'" onclick="this.classList.remove(\'hid\')"><b>'+esc(c.cap)+'</b></div><div class="st"><span class="chip"><i class="sw" style="background:var(--s'+s+')"></i>'+STATUS[s]+(spd(c.id)===2?' ⚡':'')+'</span></div></div>';}).join('');
+}
+function bindList(){
+  const upd=()=>{listOpts.q=document.getElementById('lq').value;listOpts.ct=document.getElementById('lct').value;listOpts.ph=document.getElementById('lph').value;listOpts.st=document.getElementById('lst').value;listOpts.hide=document.getElementById('lhide').checked;document.getElementById('lres').innerHTML=listRows();};
+  ['lq','lct','lph','lst','lhide'].forEach(id=>{const el=document.getElementById(id);el.addEventListener(id==='lq'?'input':'change',upd);});
+  document.getElementById('lres').innerHTML=listRows();
+}
+
+/* ============ VISTA: PRÀCTICA ============ */
+let FP={src:'seen',ct:'',mode:'choice',n:20};
+function vPractica(){
+  const sel=(id,opts,val)=>'<select class="inp" id="'+id+'" onchange="FP.'+id.slice(2)+'=this.value">'+opts.map(([v,l])=>'<option value="'+v+'" '+(String(val)===String(v)?'selected':'')+'>'+l+'</option>').join('')+'</select>';
+  const bw=bestSprint('write'),bc=bestSprint('choice');
+  return '<div class="card"><h2>⚡ Contrarellotge 60 s</h2><p class="sub">Tantes capitals com puguis en un minut, només amb les que ja tens apreses (les lentes surten més sovint). Mesura el <b>temps de reacció</b>: des que surt el país fins que comences a escriure (o tries l\'opció).</p>'+
+    '<div class="kv"><span>Mode</span><select class="inp" onchange="SP.mode=this.value"><option value="write" '+(SP.mode==='write'?'selected':'')+'>Escriure</option><option value="choice" '+(SP.mode==='choice'?'selected':'')+'>Opcions</option></select></div>'+
+    '<div class="kv"><span>Rècords</span><b>Escrivint: '+(bw||'—')+' · Opcions: '+(bc||'—')+'</b></div>'+
+    '<div class="kv"><span>Automàtica ⚡</span><span>menys de 2 s escrivint · 2,5 s amb opcions</span></div>'+
+    '<div class="row" style="margin-top:14px"><button class="btn pri" onclick="startSprint()">Comença</button></div><div id="spmsg" class="muted" style="margin-top:8px"></div></div>'+
+    '<div class="card"><h2>Pràctica lliure</h2><p class="sub">Rondes extra sense afectar el calendari de repassos. Ideal per reforçar un continent o fer el mode invers (capital → país).</p>'+
+    '<div class="kv"><span>Quines</span>'+sel('fpsrc',[['seen','Les que ja he estudiat'],['hard','Les que més em costen'],['p1','Tota la Fase 1'],['p2','Tota la Fase 2'],['p3','Tota la Fase 3'],['all','Totes']],FP.src)+'</div>'+
+    '<div class="kv"><span>Continent</span>'+sel('fpct',[['','Tots'],...CONT_ORDER.map(c=>[c,CONT[c]])],FP.ct)+'</div>'+
+    '<div class="kv"><span>Mode</span>'+sel('fpmode',[['choice','Opcions (4 respostes)'],['write','Escriure'],['reverse','Invers: capital → país']],FP.mode)+'</div>'+
+    '<div class="kv"><span>Preguntes</span>'+sel('fpn',[[10,'10'],[20,'20'],[40,'40'],[999,'Totes']],FP.n)+'</div>'+
+    '<div class="row" style="margin-top:14px"><button class="btn pri" onclick="startFree()">Comença</button></div><div id="fpmsg" class="muted" style="margin-top:8px"></div></div>';
+}
+function startFree(o){
+  if(o)Object.assign(FP,o);
+  let pool=C.filter(c=>!FP.ct||c.ct===FP.ct);
+  if(FP.src==='seen')pool=pool.filter(c=>bOf(c.id)>0);
+  else if(FP.src==='hard'){pool=pool.filter(c=>S.cards[c.id]&&S.cards[c.id].ko>0).sort((a,b)=>S.cards[b.id].ko-S.cards[a.id].ko).slice(0,20);}
+  else if(FP.src!=='all')pool=pool.filter(c=>c.ph===+FP.src.slice(1));
+  if(!pool.length){go('practica');setTimeout(()=>{const m=document.getElementById('fpmsg');if(m)m.textContent='No hi ha cap capital amb aquests filtres encara.';},0);return;}
+  const items=shuffle(pool).slice(0,+FP.n).map(c=>({id:c.id,kind:'free'}));
+  startQuiz({kind:'free',title:FP.mode==='reverse'?'Pràctica · mode invers':'Pràctica lliure',items,mode:FP.mode==='write'?'write':'choice',reverse:FP.mode==='reverse',requeue:false,total:items.length,done:0,
+    onDone:(q)=>{RES={type:'free',q};route='result';Q=null;render();}});
+}
+
+/* ============ VISTA: AJUSTOS ============ */
+function vAjustos(){
+  return '<div class="card"><h2>Ajustos</h2>'+
+    '<h3 style="margin-top:12px">Capitals noves per dia</h3><select class="inp" onchange="S.settings.newPerDay=+this.value;save();render()">'+[5,10,15,20,25,30].map(n=>'<option '+(S.settings.newPerDay===n?'selected':'')+'>'+n+'</option>').join('')+'</select>'+
+    '<p class="muted">15 és un bon equilibri. Més noves cada dia vol dir més repassos els dies següents.</p>'+
+    '<h3 style="margin-top:16px">Com vols respondre a la sessió diària</h3>'+
+    '<label class="radio"><input type="radio" name="md" '+(S.settings.mode==='write'?'checked':'')+' onchange="S.settings.mode=\'write\';save()"> <span><b>Escriure</b> (recomanat: memoritzes millor; tolera accents i petites errades)</span></label>'+
+    '<label class="radio"><input type="radio" name="md" '+(S.settings.mode==='choice'?'checked':'')+' onchange="S.settings.mode=\'choice\';save()"> <span><b>Opcions</b> (4 respostes; més ràpid al mòbil)</span></label>'+
+    '<p class="muted">L\'examen de nivell sempre és escrivint, perquè mesuri el que recordes de veritat.</p></div>'+
+    '<div class="card"><h3>Còpia de seguretat</h3><p class="sub">El progrés es desa en aquest iPhone, dins de l\'app. Desa\'n una còpia de tant en tant (per exemple a Fitxers o a iCloud Drive) per no perdre\'l si esborres l\'app.'+(S.lastBackup?' Última còpia: '+esc(S.lastBackup)+'.':'')+'</p>'+
+    '<div class="row"><button class="btn pri" onclick="shareBackup(this)">Desa una còpia…</button><button class="btn" onclick="copyBackup(this)">Copia el text</button><button class="btn" onclick="document.getElementById(\'imp\').style.display=\'block\'">Importa</button></div>'+
+    '<div id="imp" style="display:none;margin-top:10px"><label class="btn" style="margin-bottom:8px">Tria un fitxer de còpia<input type="file" accept=".json,application/json,text/plain" class="sr" onchange="importFile(this)"></label><textarea id="impt" rows="4" style="width:100%;font-size:16px" placeholder="…o enganxa aquí el text de la còpia"></textarea><div class="row" style="margin-top:6px"><button class="btn pri" onclick="importBackup()">Importa i substitueix</button><span id="impm" class="muted"></span></div></div></div>'+
+    '<div class="card"><h3>Començar de zero</h3>'+(confirmReset?'<div class="confirm">S\'esborrarà tot el progrés, l\'examen de nivell i l\'historial. Segur?<div class="row" style="margin-top:8px"><button class="btn danger" onclick="doReset()">Sí, esborra-ho tot</button><button class="btn" onclick="confirmReset=false;render()">Cancel·la</button></div></div>':'<button class="btn danger" onclick="confirmReset=true;render()">Esborra el progrés</button>')+'</div>';
+}
+function markBackup(){S.lastBackup=new Date().toLocaleDateString('ca-ES');S.lastBackupN=tn();try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+function copyBackup(btn){const txt=JSON.stringify(S);navigator.clipboard.writeText(txt).then(()=>{btn.textContent='Copiada ✓';markBackup();},()=>{btn.textContent='No s\'ha pogut copiar';});}
+async function shareBackup(btn){
+  const name='capitals-copia-'+T()+'.json'; const blob=new Blob([JSON.stringify(S)],{type:'application/json'});
+  try{const f=new File([blob],name,{type:'application/json'});
+    if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:'Còpia de Capitals'});markBackup();btn.textContent='Desada ✓';return;}}catch(e){if(e&&e.name==='AbortError')return;}
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();markBackup();btn.textContent='Descarregada ✓';
+}
+function importText(txt){const o=JSON.parse(txt);if(!o||o.v!==1||!o.cards)throw 0;S=o;if(!S.lastBackupN)S.lastBackupN=tn();save();}
+function importFile(inp){const f=inp.files&&inp.files[0];if(!f)return;f.text().then(t=>{try{importText(t);const m=document.getElementById('impm')||document.getElementById('welm');if(m)m.textContent='Importada ✓';setTimeout(()=>go('avui'),600);}catch(e){const m=document.getElementById('impm')||document.getElementById('welm');if(m)m.textContent='Aquest fitxer no és una còpia vàlida.';}});}
+function importBackup(id){try{importText(document.getElementById(id||'impt').value);const m=document.getElementById('impm')||document.getElementById('welm');if(m)m.textContent='Importada ✓';setTimeout(()=>go('avui'),600);}catch(e){const m=document.getElementById(id==='welt'?'welm':'impm');if(m)m.textContent='El text no és una còpia vàlida.';}}
+function doReset(){S=fresh();confirmReset=false;save();go('avui');}
+
+/* ============ INICI ============ */
+(async function(){
+  await initStore();
+  render();
+  if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost')){navigator.serviceWorker.register('sw.js').catch(()=>{});}
+})();
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&route!=='quiz'&&route!=='study'){render();}});
+</script>
+</body>
+</html>
